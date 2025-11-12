@@ -7,9 +7,9 @@ import 'games/stamper_game.dart';
 class PerspectiveProfessionsScreen extends StatefulWidget {
   final List<Map<String, dynamic>> perspectiveProfessions;
   final String userId;
-  
+
   const PerspectiveProfessionsScreen({
-    super.key, 
+    super.key,
     required this.perspectiveProfessions,
     required this.userId,
   });
@@ -18,50 +18,7 @@ class PerspectiveProfessionsScreen extends StatefulWidget {
   State<PerspectiveProfessionsScreen> createState() => _PerspectiveProfessionsScreenState();
 }
 
-class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScreen> 
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
-
-    _animationController.forward();
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  int _parseMinSalary(String salary) {
-    final match = RegExp(r'(\d+)').firstMatch(salary);
-    return match != null ? int.parse(match.group(1)!) : 0;
-  }
-
+class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScreen> {
   int _parseMaxSalary(String salary) {
     final matches = RegExp(r'(\d+)').allMatches(salary).toList();
     return matches.length > 1 ? int.parse(matches[1].group(1)!) : 0;
@@ -69,7 +26,7 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
 
   void _handlePlay(String name) {
     Widget? gameScreen;
-    
+
     switch (name) {
       case 'Литейщик':
         gameScreen = FoundryGame(userId: widget.userId);
@@ -91,7 +48,7 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
           );
         return;
     }
-    
+
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => gameScreen!),
@@ -212,94 +169,46 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
                 ),
               ),
 
-              // График зарплат
+              // Места обучения - растянуто до конца
               Expanded(
-                child: AnimatedBuilder(
-                  animation: _animationController,
-                  builder: (context, child) {
-                    return FadeTransition(
-                      opacity: _fadeAnimation,
-                      child: SlideTransition(
-                        position: _slideAnimation,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20),
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.95),
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 15,
-                                offset: const Offset(0, 5),
-                              ),
-                            ],
-                          ),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.95),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Где учиться в Удмуртии",
+                        style: GoogleFonts.nunito(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: const Color(0xFF0A0F2D),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Expanded(
+                        child: SingleChildScrollView(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "График заработных плат",
-                                style: GoogleFonts.nunito(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF0A0F2D),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              
-                              // График
-                              Expanded(
-                                child: _buildSalaryChart(sortedProfessions),
-                              ),
-                            ],
+                            children: sortedProfessions.map((profession) {
+                              return _buildEducationInfo(profession);
+                            }).toList(),
                           ),
                         ),
                       ),
-                    );
-                  },
+                    ],
+                  ),
                 ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Места обучения
-              Container(
-               height: 300,
-               margin: const EdgeInsets.symmetric(horizontal: 20),
-               padding: const EdgeInsets.all(20),
-               decoration: BoxDecoration(
-                 color: Colors.white.withOpacity(0.95),
-                 borderRadius: BorderRadius.circular(20),
-                 boxShadow: [
-                   BoxShadow(
-                     color: Colors.black.withOpacity(0.1),
-                     blurRadius: 15,
-                     offset: const Offset(0, 5),
-                   ),
-                 ],
-               ),
-               child: Column(
-                 crossAxisAlignment: CrossAxisAlignment.start,
-                 children: [
-                   Text(
-                     "Где учиться в Удмуртии",
-                     style: GoogleFonts.nunito(
-                       fontSize: 18,
-                       fontWeight: FontWeight.w700,
-                       color: const Color(0xFF0A0F2D),
-                     ),
-                   ),
-                   const SizedBox(height: 16),
-                   Expanded(
-                     child: SingleChildScrollView(
-                       child: Column(
-                         children: sortedProfessions.map((profession) => _buildEducationInfo(profession)).toList(),
-                       ),
-                     ),
-                   ),
-                 ],
-               ),
               ),
 
               const SizedBox(height: 20),
@@ -307,188 +216,6 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildSalaryChart(List<Map<String, dynamic>> professions) {
-    professions.map((p) => _parseMaxSalary(p['salary'])).reduce((a, b) => a > b ? a : b);
-    
-    return Column(
-      children: [
-        // Заголовок графика
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Профессия",
-              style: GoogleFonts.nunito(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF0A0F2D),
-              ),
-            ),
-            Text(
-              "Зарплата (₽)",
-              style: GoogleFonts.nunito(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF0A0F2D),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        
-        // Столбцы графика
-        Expanded(
-          child: Column(
-            children: professions.asMap().entries.map((entry) {
-              final profession = entry.value;
-              final minSalary = _parseMinSalary(profession['salary']);
-              final maxSalary = _parseMaxSalary(profession['salary']);
-              final minHeight = (minSalary / maxSalary) * 200;
-              final maxHeight = (maxSalary / maxSalary) * 200;
-              
-              return Container(
-                margin: const EdgeInsets.only(bottom: 20),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    // Название профессии
-                    SizedBox(
-                      width: 100,
-                      child: Text(
-                        profession['name'],
-                        style: GoogleFonts.nunito(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF0A0F2D),
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    
-                    const SizedBox(width: 16),
-                    
-                    // График
-                    Expanded(
-                      child: SizedBox(
-                        height: 220,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // Минимальная зарплата
-                            Container(
-                              width: 30,
-                              height: minHeight,
-                              decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.6),
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                              ),
-                            ),
-                            
-                            const SizedBox(width: 2),
-                            
-                            // Максимальная зарплата
-                            Container(
-                              width: 30,
-                              height: maxHeight,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                  colors: [
-                                    const Color(0xFF6C63FF),
-                                    const Color(0xFF4A90E2),
-                                  ],
-                                ),
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    
-                    const SizedBox(width: 16),
-                    
-                    // Значения зарплаты
-                    SizedBox(
-                      width: 60,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            profession['salary'],
-                            style: GoogleFonts.nunito(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF6C63FF),
-                            ),
-                            textAlign: TextAlign.right,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildPlayButton(profession['name'], compact: true),
-                  ],
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        
-        // Легенда
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 16,
-              height: 16,
-              decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.6),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              "Минимальная",
-              style: GoogleFonts.nunito(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF0A0F2D),
-              ),
-            ),
-            
-            const SizedBox(width: 24),
-            
-            Container(
-              width: 16,
-              height: 16,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF6C63FF), Color(0xFF4A90E2)],
-                ),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              "Максимальная",
-              style: GoogleFonts.nunito(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF0A0F2D),
-              ),
-            ),
-          ],
-        ),
-      ],
     );
   }
 
@@ -526,9 +253,9 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
               ),
             ],
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           Text(
             "Учебные заведения:",
             style: GoogleFonts.nunito(
@@ -537,9 +264,9 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
               color: const Color(0xFF6C63FF),
             ),
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           for (var college in profession['colleges'] as List)
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
@@ -564,9 +291,9 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
                 ],
               ),
             ),
-          
+
           const SizedBox(height: 8),
-          
+
           Row(
             children: [
               Icon(
@@ -586,6 +313,7 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
             ],
           ),
           const SizedBox(height: 12),
+          // Кнопка "Играть" для всех профессий
           Align(
             alignment: Alignment.centerRight,
             child: _buildPlayButton(profession['name']),

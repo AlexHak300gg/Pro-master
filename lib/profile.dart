@@ -48,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     _initializeStars();
     _loadProfile();
     _loadFavorites();
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ThemeManager>().initialize(widget.userId);
     });
@@ -777,7 +777,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             'ЕГЭ',
                             'Подготовка к единому гос. экзамену',
                             Icons.school,
-                            () => Navigator.push(
+                                () => Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => EGEScreen(userId: widget.userId)),
                             ),
@@ -788,7 +788,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             'ОГЭ',
                             'Подготовка к основному гос. экзамену',
                             Icons.school_outlined,
-                            () => Navigator.push(
+                                () => Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => OGEScreen(userId: widget.userId)),
                             ),
@@ -813,7 +813,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             'Pomodoro таймер',
                             'Планируйте циклы работы и отдыха',
                             Icons.timer,
-                            () => Navigator.pushNamed(
+                                () => Navigator.pushNamed(
                               context,
                               '/pomodoro',
                               arguments: widget.userId,
@@ -825,7 +825,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             'Календарь подготовки',
                             'Расписывайте занятия по дням',
                             Icons.calendar_today,
-                            () => Navigator.pushNamed(
+                                () => Navigator.pushNamed(
                               context,
                               '/schedule',
                               arguments: widget.userId,
@@ -837,7 +837,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             'Заметки',
                             'Храните идеи и списки задач',
                             Icons.note_alt,
-                            () => Navigator.pushNamed(
+                                () => Navigator.pushNamed(
                               context,
                               '/notes',
                               arguments: widget.userId,
@@ -863,7 +863,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             'Шансы поступления',
                             'Рассчитайте свои шансы на профессию',
                             Icons.trending_up,
-                            () => Navigator.push(
+                                () => Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => AdmissionChancesScreen(userId: widget.userId)),
                             ),
@@ -888,7 +888,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             'Магазин мерча',
                             'Купите мерч на баллы',
                             Icons.shopping_bag,
-                            () => Navigator.push(
+                                () => Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => MerchShopScreen(userId: widget.userId)),
                             ),
@@ -913,7 +913,7 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                             'Тема приложения',
                             'Выберите тему оформления',
                             Icons.palette,
-                            () => Navigator.push(
+                                () => Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ThemeSettingsPage(userId: widget.userId),
