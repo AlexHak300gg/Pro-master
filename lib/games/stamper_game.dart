@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'dart:math' as math;
+import '../theme/themed_background.dart';
 
 class StamperGame extends StatefulWidget {
   final String userId;
@@ -168,32 +168,24 @@ class _StamperGameState extends State<StamperGame> with TickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F2D),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFF0A0F2D),
-              const Color(0xFF1E3A8A).withOpacity(0.3),
-              const Color(0xFF0A0F2D),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(),
-              if (!_isGameActive && _accuracyHistory.isEmpty)
-                Expanded(child: _buildStartScreen())
-              else if (!_isGameActive && _accuracyHistory.isNotEmpty)
-                Expanded(child: _buildResultScreen())
-              else
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          const ThemedBackground(),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(),
+                if (!_isGameActive && _accuracyHistory.isEmpty)
+                  Expanded(child: _buildStartScreen())
+                else if (!_isGameActive && _accuracyHistory.isNotEmpty)
+                  Expanded(child: _buildResultScreen())
+                else
                 Expanded(child: _buildGameScreen()),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

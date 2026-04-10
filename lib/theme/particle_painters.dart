@@ -90,3 +90,53 @@ class RaindropPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+/// CustomPainter that draws a graph paper (grid) background.
+/// Для ПрофГид: тёмно-синий фон с тёплыми оранжевыми линиями.
+class GraphPaperPainter extends CustomPainter {
+  final double gridSize;
+  final Color lineColor;
+  final Color backgroundColor;
+
+  GraphPaperPainter({
+    this.gridSize = 20.0,
+    Color? lineColor,
+    Color? backgroundColor,
+  })  : lineColor = lineColor ?? const Color(0xFFFF8A30),
+        backgroundColor = backgroundColor ?? const Color(0xFF0A0F2D);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Тёмно-синий фон
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      Paint()..color = backgroundColor,
+    );
+
+    // Тёплые оранжевые линии клетки
+    final paint = Paint()
+      ..color = lineColor
+      ..strokeWidth = 0.6;
+
+    // Draw vertical lines
+    for (double x = 0; x < size.width; x += gridSize) {
+      canvas.drawLine(
+        Offset(x, 0),
+        Offset(x, size.height),
+        paint,
+      );
+    }
+
+    // Draw horizontal lines
+    for (double y = 0; y < size.height; y += gridSize) {
+      canvas.drawLine(
+        Offset(0, y),
+        Offset(size.width, y),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}

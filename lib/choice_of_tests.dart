@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'tests.dart';
 import 'widgets/bottom_nav.dart';
-import 'dart:math';
+import 'theme/themed_background.dart';
+import 'theme/app_theme.dart';
+import 'theme/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 class ChoiceOfTestsPage extends StatefulWidget {
   final String userId;
@@ -12,91 +15,10 @@ class ChoiceOfTestsPage extends StatefulWidget {
   State<ChoiceOfTestsPage> createState() => _ChoiceOfTestsPageState();
 }
 
-class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTickerProviderStateMixin {
-  late AnimationController _starController;
-  final List<Star> _stars = [];
-  final Random _random = Random();
-
+class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> {
   @override
   void initState() {
     super.initState();
-    _starController = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    )..repeat();
-
-    _initializeStars();
-  }
-
-  void _initializeStars() {
-    for (int i = 0; i < 150; i++) {
-      _stars.add(Star(
-        x: _random.nextDouble() * 1.5 - 0.5, // Начинаем слева за экраном
-        y: _random.nextDouble() * 2 - 1,
-        speed: 0.3 + _random.nextDouble() * 0.7,
-        size: 2.0 + _random.nextDouble() * 4.0,
-        delay: _random.nextDouble() * 3.0,
-        brightness: 0.6 + _random.nextDouble() * 0.4,
-      ));
-    }
-  }
-
-  Widget _buildStarBackground() {
-    return AnimatedBuilder(
-      animation: _starController,
-      builder: (context, child) {
-        return Stack(
-          children: _stars.map((star) {
-            final progress = (_starController.value * star.speed + star.delay) % 2.0;
-            // Движение под углом 45 градусов: x и y увеличиваются одновременно
-            final x = star.x + progress * 1.5;
-            final y = star.y + progress * 1.5;
-            final opacity = x > 0 && x < 1.5 && y > -0.5 && y < 1.5
-                ? (1.0 - (progress / 2.0).abs()) * star.brightness
-                : 0.0;
-
-            final pulse = (sin(_starController.value * 5 * pi + star.delay * 8) + 1) / 2;
-            final currentOpacity = opacity * (0.8 + 0.2 * pulse);
-
-            return Positioned(
-              left: x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Opacity(
-                opacity: currentOpacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: star.size,
-                  height: star.size,
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      // Яркое желтое свечение
-                      BoxShadow(
-                        color: Colors.yellow.withOpacity(0.9),
-                        blurRadius: star.size * 3,
-                        spreadRadius: star.size * 0.8,
-                      ),
-                      // Оранжевое внешнее свечение
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.6),
-                        blurRadius: star.size * 6,
-                        spreadRadius: star.size * 2,
-                      ),
-                      // Белое горячее ядро
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.95),
-                        blurRadius: 1,
-                        spreadRadius: 0.5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
   }
 
   void _navigate(BuildContext context, int index) {
@@ -116,12 +38,6 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
         Navigator.pushReplacementNamed(context, '/profile', arguments: widget.userId);
         break;
     }
-  }
-
-  @override
-  void dispose() {
-    _starController.dispose();
-    super.dispose();
   }
 
   @override
@@ -157,23 +73,23 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
       backgroundColor: const Color(0xFF0A0F2D),
       body: Stack(
         children: [
-          // Звездный фон с падением под 45 градусов
-          _buildStarBackground(),
+          const ThemedBackground(),
 
           // Градиентный оверлей
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF0A0F2D).withOpacity(0.6),
-                  const Color(0xFF1E3A8A).withOpacity(0.4),
-                  const Color(0xFF0A0F2D).withOpacity(0.6),
-                ],
+          if (context.watch<ThemeManager>().currentTheme != SeasonTheme.profgid && context.watch<ThemeManager>().currentTheme != SeasonTheme.greeting)
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                    const Color(0xFF1E3A8A).withValues(alpha: 0.4),
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                  ],
+                ),
               ),
             ),
-          ),
 
           SafeArea(
             child: Column(
@@ -194,7 +110,7 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
                           shadows: [
                             Shadow(
                               blurRadius: 10,
-                              color: Colors.black.withOpacity(0.5),
+                              color: Colors.black.withValues(alpha: 0.5),
                               offset: const Offset(2, 2),
                             ),
                           ],
@@ -209,7 +125,7 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
                           shadows: [
                             Shadow(
                               blurRadius: 15,
-                              color: Colors.orange.withOpacity(0.7),
+                              color: Colors.orange.withValues(alpha: 0.7),
                               offset: const Offset(2, 2),
                             ),
                           ],
@@ -240,7 +156,7 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           child: Material(
                             borderRadius: BorderRadius.circular(20),
-                            color: Colors.white.withOpacity(0.95),
+                            color: Colors.white.withValues(alpha: 0.95),
                             elevation: 8,
                             child: InkWell(
                               borderRadius: BorderRadius.circular(20),
@@ -259,7 +175,7 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
                                     end: Alignment.bottomRight,
                                     colors: [
                                       t["color"] as Color,
-                                      (t["color"] as Color).withOpacity(0.8),
+                                      (t["color"] as Color).withValues(alpha: 0.8),
                                     ],
                                   ),
                                 ),
@@ -268,7 +184,7 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
                                     Container(
                                       padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: Colors.white.withValues(alpha: 0.2),
                                         shape: BoxShape.circle,
                                       ),
                                       child: Icon(
@@ -298,7 +214,7 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
                                             style: GoogleFonts.nunito(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
-                                              color: Colors.white.withOpacity(0.9),
+                                            color: Colors.white.withValues(alpha: 0.9),
                                             ),
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
@@ -310,7 +226,7 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
                                     Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.3),
+                                        color: Colors.white.withValues(alpha: 0.3),
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
@@ -343,20 +259,3 @@ class _ChoiceOfTestsPageState extends State<ChoiceOfTestsPage> with SingleTicker
   }
 }
 
-class Star {
-  final double x;
-  final double y;
-  final double speed;
-  final double size;
-  final double delay;
-  final double brightness;
-
-  Star({
-    required this.x,
-    required this.y,
-    required this.speed,
-    required this.size,
-    required this.delay,
-    required this.brightness,
-  });
-}

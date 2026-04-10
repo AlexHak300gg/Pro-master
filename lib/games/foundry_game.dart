@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'dart:math' as math;
+import '../theme/themed_background.dart';
 
 // Модель данных
 @immutable
@@ -180,21 +180,12 @@ class _FoundryGameState extends State<FoundryGame> with TickerProviderStateMixin
       animation: _state,
       builder: (context, _) {
         return Scaffold(
-          backgroundColor: _AppColors.background,
-          body: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  _AppColors.background,
-                  _AppColors.primary.withOpacity(0.2),
-                  _AppColors.background,
-                ],
-              ),
-            ),
-            child: SafeArea(
-              child: Column(
+          backgroundColor: Colors.transparent,
+          body: Stack(
+            children: [
+              const ThemedBackground(),
+              SafeArea(
+                child: Column(
                 children: [
                   _Header(state: _state, onBack: () => Navigator.pop(context)),
                   Expanded(
@@ -206,6 +197,7 @@ class _FoundryGameState extends State<FoundryGame> with TickerProviderStateMixin
                 ],
               ),
             ),
+            ],
           ),
         );
       },
@@ -251,7 +243,7 @@ class _Header extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: _AppColors.primary.withOpacity(0.3),
+            color: _AppColors.primary.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -295,7 +287,7 @@ class _IconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: _AppColors.primary.withOpacity(0.1),
+      color: _AppColors.primary.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
@@ -434,7 +426,7 @@ class _MoldCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: selected ? _AppColors.primary.withOpacity(0.4) : Colors.black12,
+              color: selected ? _AppColors.primary.withValues(alpha: 0.4) : Colors.black12,
               blurRadius: selected ? 16 : 8,
               offset: const Offset(0, 4),
             ),
@@ -579,7 +571,7 @@ class _MoldContainer extends StatelessWidget {
           Icon(
             icon,
             size: 80,
-            color: Colors.white.withOpacity(0.8),
+            color: Colors.white.withValues(alpha: 0.8),
           ),
         ],
       ),
@@ -654,7 +646,10 @@ class _MetalStream extends AnimatedWidget {
   @override
   Widget build(BuildContext context) {
     final animation = listenable as Animation<double>;
-    onFill(animation.value);
+    // Вызываем onFill через пост-фрейм callback, а не внутри build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      onFill(animation.value);
+    });
 
     return CustomPaint(
       size: const Size(8, 32),
@@ -771,7 +766,7 @@ class _ResultScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: _AppColors.primary.withOpacity(0.4),
+                color: _AppColors.primary.withValues(alpha: 0.4),
                 blurRadius: 24,
                 offset: const Offset(0, 8),
               ),

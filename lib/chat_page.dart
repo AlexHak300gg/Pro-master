@@ -1,16 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:math' as math;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'widgets/bottom_nav.dart';
+import 'theme/themed_background.dart';
+import 'theme/theme_manager.dart';
+import 'theme/app_theme.dart';
 
-const String API_ENDPOINT =
+const String apiEndpoint =
     'https://api.intelligence.io.solutions/api/v1/chat/completions';
-const String API_KEY =
+const String apiKey =
     'io-v2-eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJvd25lciI6IjEzYTk1NjZlLWE5OWQtNDlmYy04YzJjLTE3MDFiYWY4YjYwMCIsImV4cCI6NDkxNDQyNzEzMH0.kgDeNQVg_p26eJBtdRb73gB1VFENY1y_oAH4mb0bfj3yQc_RCgpmQNi2mhWG7RHADkIfxewLUoU8Vv62Zx72YQ';
-const String MODEL_ID = 'openai/gpt-oss-120b';
+const String modelId = 'openai/gpt-oss-120b';
 
 class CareerChatPage extends StatefulWidget {
   final String userId;
@@ -21,39 +24,16 @@ class CareerChatPage extends StatefulWidget {
   State<CareerChatPage> createState() => _CareerChatPageState();
 }
 
-class _CareerChatPageState extends State<CareerChatPage>
-    with TickerProviderStateMixin {
+class _CareerChatPageState extends State<CareerChatPage> {
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final List<_ChatMessage> _messages = [];
   bool _loading = false;
 
-  late final AnimationController _starCtrl;
-  final List<_Star> _stars = [];
-  final _random = math.Random();
-
   @override
   void initState() {
     super.initState();
-    _starCtrl = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    )..repeat();
-    _initStars();
-    _loadChatHistory(); // 📥 загружаем сохранённые сообщения
-  }
-
-  void _initStars() {
-    for (int i = 0; i < 120; i++) {
-      _stars.add(_Star(
-        x: _random.nextDouble() * 1.5 - 0.5,
-        y: _random.nextDouble() * 2 - 1,
-        speed: 0.3 + _random.nextDouble() * 0.7,
-        size: 1.5 + _random.nextDouble() * 3,
-        delay: _random.nextDouble() * 3,
-        brightness: 0.6 + _random.nextDouble() * 0.4,
-      ));
-    }
+    _loadChatHistory();
   }
 
   String get _systemPrompt => '''
@@ -69,7 +49,6 @@ class _CareerChatPageState extends State<CareerChatPage>
 Пиши по-русски.
 ''';
 
-  /// 🧩 Загрузка истории из SharedPreferences
   Future<void> _loadChatHistory() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'chat_history_${widget.userId}';
@@ -84,7 +63,6 @@ class _CareerChatPageState extends State<CareerChatPage>
     }
   }
 
-  /// 💾 Сохранение чата
   Future<void> _saveChatHistory() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'chat_history_${widget.userId}';
@@ -92,7 +70,6 @@ class _CareerChatPageState extends State<CareerChatPage>
     await prefs.setString(key, data);
   }
 
-  /// ❌ Очистка истории
   Future<void> _clearChatHistory() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('chat_history_${widget.userId}');
@@ -110,7 +87,7 @@ class _CareerChatPageState extends State<CareerChatPage>
     await _saveChatHistory();
 
     final payload = {
-      "model": MODEL_ID,
+      "model": modelId,
       "messages": [
         {"role": "system", "content": _systemPrompt},
         ..._messages.map((m) => {"role": m.role, "content": m.content}),
@@ -121,10 +98,10 @@ class _CareerChatPageState extends State<CareerChatPage>
 
     try {
       final resp = await http.post(
-        Uri.parse(API_ENDPOINT),
+        Uri.parse(apiEndpoint),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $API_KEY',
+          'Authorization': 'Bearer $apiKey',
         },
         body: jsonEncode(payload),
       );
@@ -143,7 +120,7 @@ class _CareerChatPageState extends State<CareerChatPage>
       setState(() {
         _messages.add(_ChatMessage(role: 'assistant', content: reply));
       });
-      await _saveChatHistory(); // 💾 сохраняем новый ответ
+      await _saveChatHistory();
       _scrollToBottom();
     } catch (e) {
       setState(() {
@@ -170,45 +147,7 @@ class _CareerChatPageState extends State<CareerChatPage>
     });
   }
 
-  Widget _buildStars() {
-    return AnimatedBuilder(
-      animation: _starCtrl,
-      builder: (_, __) {
-        return Stack(
-          children: _stars.map((s) {
-            final progress = (_starCtrl.value * s.speed + s.delay) % 2.0;
-            final x = s.x + progress * 1.5;
-            final y = s.y + progress * 1.5;
-            final opacity = (1 - (progress / 2.0).abs()) * s.brightness;
-            return Positioned(
-              left: x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Opacity(
-                opacity: opacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: s.size,
-                  height: s.size,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.blueAccent.withOpacity(0.6),
-                        blurRadius: s.size * 4,
-                        spreadRadius: s.size * 1.2,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
-  }
-
-  Widget _buildBubble(_ChatMessage msg) {
+  Widget _buildBubble(_ChatMessage msg, bool isDark, Color primaryColor) {
     final isUser = msg.role == 'user';
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -216,8 +155,9 @@ class _CareerChatPageState extends State<CareerChatPage>
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         decoration: BoxDecoration(
-          color:
-          isUser ? Colors.indigo.shade100 : Colors.white.withOpacity(0.9),
+          color: isUser
+              ? primaryColor.withValues(alpha: 0.15)
+              : (isDark ? Colors.white.withValues(alpha: 0.12) : Colors.white.withValues(alpha: 0.9)),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(14),
             topRight: const Radius.circular(14),
@@ -229,7 +169,9 @@ class _CareerChatPageState extends State<CareerChatPage>
           msg.content,
           style: GoogleFonts.nunito(
             fontSize: 16,
-            color: isUser ? Colors.indigo.shade900 : Colors.black87,
+            color: isUser
+                ? (isDark ? Colors.white : primaryColor.withValues(alpha: 0.7))
+                : (isDark ? Colors.white : Colors.black87),
             height: 1.4,
           ),
         ),
@@ -252,107 +194,132 @@ class _CareerChatPageState extends State<CareerChatPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0A0F2D),
-      appBar: AppBar(
-        title: const Text('Настя ✨'),
-        backgroundColor: const Color(0xFF0A0F2D),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline, color: Colors.yellowAccent),
-            tooltip: 'Очистить чат',
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: const Text('Очистить чат?'),
-                  content: const Text('История будет удалена безвозвратно.'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('Отмена'),
+    return Consumer<ThemeManager>(
+      builder: (context, themeManager, _) {
+        final theme = themeManager.currentTheme;
+        final isDark = theme == SeasonTheme.space || theme == SeasonTheme.profgid;
+        final primaryColor = AppTheme.getPrimaryColor(theme);
+        final textColor = isDark ? Colors.white : Colors.black87;
+        final appBarBg = isDark ? const Color(0xFF0A0F2D) : primaryColor;
+
+        return Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            title: Text('Настя ✨', style: GoogleFonts.nunito(fontWeight: FontWeight.w700)),
+            backgroundColor: appBarBg,
+            foregroundColor: isDark ? Colors.white : Colors.white,
+            elevation: 4,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.delete_outline),
+                tooltip: 'Очистить чат',
+                onPressed: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Очистить чат?'),
+                      content: const Text('История будет удалена безвозвратно.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, false),
+                          child: const Text('Отмена'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, true),
+                          child: const Text('Удалить'),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx, true),
-                      child: const Text('Удалить'),
+                  );
+                  if (confirm == true) {
+                    await _clearChatHistory();
+                  }
+                },
+              ),
+            ],
+          ),
+          body: Stack(
+            children: [
+              const ThemedBackground(),
+              if (!isDark)
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppTheme.getBackgroundColor(theme).withValues(alpha: 0.5),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              SafeArea(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _messages.length,
+                        itemBuilder: (_, i) => _buildBubble(_messages[i], isDark, primaryColor),
+                      ),
+                    ),
+                    if (_loading)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: CircularProgressIndicator(
+                          color: primaryColor,
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _controller,
+                              style: TextStyle(color: textColor),
+                              decoration: InputDecoration(
+                                hintText: 'Задай вопрос Насте...',
+                                hintStyle: TextStyle(color: textColor.withValues(alpha: 0.5)),
+                                filled: true,
+                                fillColor: isDark
+                                    ? Colors.white.withValues(alpha: 0.1)
+                                    : Colors.white.withValues(alpha: 0.7),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                              onSubmitted: (_) => _sendMessage(),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            onPressed: _loading ? null : _sendMessage,
+                            icon: Icon(Icons.send_rounded, color: primaryColor),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              );
-              if (confirm == true) {
-                await _clearChatHistory();
-              }
-            },
+              ),
+            ],
           ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          _buildStars(),
-          SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _messages.length,
-                    itemBuilder: (_, i) => _buildBubble(_messages[i]),
-                  ),
-                ),
-                if (_loading)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8.0),
-                    child:
-                    CircularProgressIndicator(color: Colors.yellowAccent),
-                  ),
-                Padding(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          style: const TextStyle(color: Colors.white),
-                          decoration: InputDecoration(
-                            hintText: 'Задай вопрос Насте...',
-                            hintStyle:
-                            const TextStyle(color: Colors.white70),
-                            filled: true,
-                            fillColor: Colors.white.withOpacity(0.1),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(16),
-                              borderSide: BorderSide.none,
-                            ),
-                          ),
-                          onSubmitted: (_) => _sendMessage(),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      IconButton(
-                        onPressed: _loading ? null : _sendMessage,
-                        icon: const Icon(Icons.send_rounded,
-                            color: Colors.yellowAccent),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          bottomNavigationBar: BottomNav(
+            currentIndex: 5,
+            onTap: _onNavTap,
+            userId: widget.userId,
           ),
-        ],
-      ),
-      bottomNavigationBar: BottomNav(
-        currentIndex: 5,
-        onTap: _onNavTap,
-        userId: widget.userId,
-      ),
+        );
+      },
     );
   }
 
   @override
   void dispose() {
-    _starCtrl.dispose();
+    _controller.dispose();
     super.dispose();
   }
 }
@@ -367,16 +334,4 @@ class _ChatMessage {
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) =>
       _ChatMessage(role: json['role'], content: json['content']);
-}
-
-class _Star {
-  final double x, y, speed, size, delay, brightness;
-  _Star({
-    required this.x,
-    required this.y,
-    required this.speed,
-    required this.size,
-    required this.delay,
-    required this.brightness,
-  });
 }

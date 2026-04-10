@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -138,7 +138,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 45.0,
         'city': 'Сарапул',
         'specialties': ['Автомеханик', 'Электромонтажник', 'Слесарь-механик', 'Сварщик'],
-        'url': 'https://ciur.ru/sit',
+        'url': 'https://ciur.ru/sit/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -149,7 +149,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 55.0,
         'city': 'Ижевск',
         'specialties': ['Бухгалтер', 'Менеджер по продажам', 'Торговый представитель', 'Продавец'],
-        'url': 'https://ciur.ru/itet',
+        'url': 'https://ciur.ru/itet/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -160,7 +160,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 40.0,
         'city': 'Глазов',
         'specialties': ['Агроном', 'Механизатор', 'Зоотехник', 'Электромонтажник'],
-        'url': 'https://ciur.ru/gapt',
+        'url': 'https://ciur.ru/gapt/default.aspx',
         'type': 'АПОУ УР'
       },
       {
@@ -171,7 +171,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 48.0,
         'city': 'Сарапул',
         'specialties': ['Инженер-механик', 'Техник-механик', 'Электромонтажник', 'Слесарь'],
-        'url': 'https://ciur.ru/sptk',
+        'url': 'https://ciur.ru/sptk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -182,7 +182,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 52.0,
         'city': 'Ижевск',
         'specialties': ['Менеджер проекта', 'Экономист', 'Бухгалтер', 'Делопроизводитель'],
-        'url': 'https://ciur.ru/ipek',
+        'url': 'https://ciur.ru/ipek/default.aspx',
         'type': 'АПОУ УР'
       },
       {
@@ -193,7 +193,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 42.0,
         'city': 'Ижевск',
         'specialties': ['Строитель', 'Мастер строительных работ', 'Каменщик', 'Штукатур'],
-        'url': 'https://ciur.ru/st',
+        'url': 'https://ciur.ru/st/default.aspx',
         'type': 'АПОУ УР'
       },
       {
@@ -204,7 +204,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 50.0,
         'city': 'Глазов',
         'specialties': ['Мастер производственного обучения', 'Слесарь-механик', 'Электромонтажник'],
-        'url': 'https://ciur.ru/gtk',
+        'url': 'https://ciur.ru/gtk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -215,7 +215,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 48.0,
         'city': 'Воткинск',
         'specialties': ['Токарь', 'Фрезеровщик', 'Электромонтажник', 'Автомеханик'],
-        'url': 'https://ciur.ru/vmt',
+        'url': 'https://ciur.ru/vmt/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -226,7 +226,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 35.0,
         'city': 'Игринск',
         'specialties': ['Тракторист-машинист', 'Механизатор', 'Сварщик', 'Электромонтажник'],
-        'url': 'https://ciur.ru/ipt',
+        'url': 'https://ciur.ru/ipt/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -237,7 +237,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 40.0,
         'city': 'Ижевск',
         'specialties': ['Повар', 'Кондитер', 'Официант', 'Бармен'],
-        'url': 'https://ciur.ru/itip',
+        'url': 'https://ciur.ru/itip/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -248,7 +248,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 45.0,
         'city': 'Можга',
         'specialties': ['Агроном', 'Зоотехник', 'Механизатор', 'Ветеринар'],
-        'url': 'https://ciur.ru/magk',
+        'url': 'https://ciur.ru/mapk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -259,7 +259,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 60.0,
         'city': 'Можга',
         'specialties': ['Воспитатель детского сада', 'Учитель начальных классов', 'Педагог-психолог'],
-        'url': 'https://ciur.ru/mpk',
+        'url': 'https://ciur.ru/mpk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -270,7 +270,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 45.0,
         'city': 'Ижевск',
         'specialties': ['Монтажник', 'Электромонтажник', 'Слесарь-ремонтник'],
-        'url': 'https://ciur.ru/imt',
+        'url': 'https://ciur.ru/imt/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -281,7 +281,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 30.0,
         'city': 'Дебёсы',
         'specialties': ['Тракторист-машинист', 'Сварщик', 'Электромонтажник'],
-        'url': 'https://ciur.ru/dpt',
+        'url': 'https://ciur.ru/dpt/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -292,7 +292,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 55.0,
         'city': 'Ижевск',
         'specialties': ['Бухгалтер', 'Менеджер по продажам', 'Администратор', 'Специалист по рекламе'],
-        'url': 'https://ciur.ru/etk',
+        'url': 'https://ciur.ru/etk/default.aspx',
         'type': 'АПОУ УР'
       },
       {
@@ -303,7 +303,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 38.0,
         'city': 'Асаново',
         'specialties': ['Механизатор', 'Агроном', 'Тракторист-машинист'],
-        'url': 'https://ciur.ru/aat',
+        'url': 'https://asanovo-att.ru/',
         'type': 'БПОУ УР'
       },
       {
@@ -314,7 +314,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 65.0,
         'city': 'Ижевск',
         'specialties': ['Программист', 'Техник-программист', 'Системный администратор', 'Радиотехник'],
-        'url': 'https://ciur.ru/trit',
+        'url': 'https://www.trit.biz/',
         'type': 'АПОУ УР'
       },
       {
@@ -325,7 +325,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 58.0,
         'city': 'Ижевск',
         'specialties': ['Инженер-механик', 'Техник-механик', 'Электромонтажник', 'Автомеханик'],
-        'url': 'https://ciur.ru/ipk',
+        'url': 'https://ciur.ru/ipk/default.aspx',
         'type': 'АПОУ УР'
       },
       {
@@ -336,7 +336,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 32.0,
         'city': 'Сюмси',
         'specialties': ['Лесник', 'Мастер лесного хозяйства', 'Тракторист-машинист'],
-        'url': 'https://ciur.ru/stlsh',
+        'url': 'https://ciur.ru/stlsh/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -347,7 +347,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 52.0,
         'city': 'Ижевск',
         'specialties': ['Техник-энергетик', 'Электромонтажник', 'Электромонтер'],
-        'url': 'https://ciur.ru/tek',
+        'url': 'https://ciur.ru/tek/default.aspx',
         'type': 'АПОУ УР'
       },
       {
@@ -358,7 +358,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 50.0,
         'city': 'Сарапул',
         'specialties': ['Тренер-преподаватель', 'Специалист по работе с молодежью', 'Психолог'],
-        'url': 'https://ciur.ru/skspt',
+        'url': 'https://ciur.ru/spk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -369,7 +369,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 62.0,
         'city': 'Ижевск',
         'specialties': ['Воспитатель детского сада', 'Учитель начальных классов', 'Психолог', 'Журналист', 'Переводчик'],
-        'url': 'https://ciur.ru/urspt',
+        'url': 'https://ciur.ru/urspk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -380,7 +380,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 42.0,
         'city': 'Воткинск',
         'specialties': ['Токарь', 'Фрезеровщик', 'Слесарь-механик', 'Автомеханик'],
-        'url': 'https://ciur.ru/vpt',
+        'url': 'https://ciur.ru/vpt/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -391,7 +391,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 48.0,
         'city': 'Ижевск',
         'specialties': ['Слесарь-механик', 'Токарь', 'Фрезеровщик', 'Электромонтажник'],
-        'url': 'https://ciur.ru/iitd',
+        'url': 'https://ciur.ru/iit/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -402,7 +402,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 45.0,
         'city': 'Ижевск',
         'specialties': ['Строитель', 'Мастер строительных работ', 'Тракторист-машинист'],
-        'url': 'https://ciur.ru/iat',
+        'url': 'https://ciur.ru/iast/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -413,7 +413,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 55.0,
         'city': 'Сарапул',
         'specialties': ['Радиотехник', 'Электромонтажник', 'Системный администратор'],
-        'url': 'https://ciur.ru/rmt',
+        'url': 'https://ciur.ru/rmt/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -424,7 +424,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 58.0,
         'city': 'Воткинск',
         'specialties': ['Музыкальный работник', 'Дизайнер', 'Художник-оформитель', 'Преподаватель музыки'],
-        'url': 'https://ciur.ru/vmpt',
+        'url': 'https://ciur.ru/vmpk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -435,7 +435,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 50.0,
         'city': 'Ижевск',
         'specialties': ['Автомеханик', 'Токарь', 'Фрезеровщик', 'Слесарь-механик'],
-        'url': 'https://ciur.ru/imt',
+        'url': 'https://ciur.ru/imst/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -446,7 +446,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 52.0,
         'city': 'Глазов',
         'specialties': ['Инженер-механик', 'Техник-механик', 'Слесарь-механик', 'Электромонтажник'],
-        'url': 'https://ciur.ru/gpk',
+        'url': 'https://ciur.ru/glazovpk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -457,7 +457,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 35.0,
         'city': 'Ува',
         'specialties': ['Тракторист-машинист', 'Механизатор', 'Сварщик', 'Электромонтажник'],
-        'url': 'https://ciur.ru/upk',
+        'url': 'https://ciur.ru/upk/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -468,7 +468,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 28.0,
         'city': 'Яр',
         'specialties': ['Тракторист-машинист', 'Механизатор', 'Электромонтажник'],
-        'url': 'https://ciur.ru/yp',
+        'url': 'https://ciur.ru/yapt/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -479,7 +479,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 45.0,
         'city': 'Ижевск',
         'specialties': ['Автомеханик', 'Автослесарь', 'Электромонтажник'],
-        'url': 'https://ciur.ru/iatk',
+        'url': 'https://ciur.ru/iat/default.aspx',
         'type': 'БПОУ УР'
       },
       {
@@ -490,7 +490,7 @@ class _CollegeRatingPageState extends State<CollegeRatingPage> with SingleTicker
         'price': 48.0,
         'city': 'Сарапул',
         'specialties': ['Токарь', 'Фрезеровщик', 'Программист', 'Техник-программист'],
-        'url': 'https://ciur.ru/stmi',
+        'url': 'http://stmit.ru/',
         'type': 'БПОУ УР'
       }
       // ... остальные колледжи

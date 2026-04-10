@@ -3,7 +3,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'widgets/bottom_nav.dart';
 import 'perspective_professions_screen.dart';
-import 'dart:math';
+import 'theme/themed_background.dart';
+import 'theme/app_theme.dart';
+import 'theme/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 class ProfessionsPage extends StatefulWidget {
   final String userId;
@@ -13,92 +16,21 @@ class ProfessionsPage extends StatefulWidget {
   State<ProfessionsPage> createState() => _ProfessionsPageState();
 }
 
-class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProviderStateMixin {
+class _ProfessionsPageState extends State<ProfessionsPage> {
   final _db = FirebaseDatabase.instance.ref();
   List<Map<String, dynamic>> professions = [];
   List<String> favoriteProfessions = [];
   List<String> filteredProfessions = [];
   List<String> testResults = [];
   String _selectedFilter = 'Все профессии';
-  int _currentIndex = 3;
-  late AnimationController _starController;
-  final List<Star> _stars = [];
-  final Random _random = Random();
+  final int _currentIndex = 3;
 
   @override
   void initState() {
     super.initState();
-    _starController = AnimationController(
-      duration: const Duration(seconds: 30),
-      vsync: this,
-    )..repeat();
-
-    _initializeStars();
     _loadProfessions();
     _loadFavorites();
     _loadTestResults();
-  }
-
-  void _initializeStars() {
-    for (int i = 0; i < 150; i++) { // 150 звезд
-      _stars.add(Star(
-        x: _random.nextDouble() * 1.5 - 0.5,
-        y: _random.nextDouble() * 2 - 1,
-        speed: 0.2 + _random.nextDouble() * 0.8,
-        size: 1.0 + _random.nextDouble() * 3.0,
-        delay: _random.nextDouble() * 4.0,
-        brightness: 0.4 + _random.nextDouble() * 0.6,
-      ));
-    }
-  }
-
-  Widget _buildStarBackground() {
-    return AnimatedBuilder(
-      animation: _starController,
-      builder: (context, child) {
-        return Stack(
-          children: _stars.map((star) {
-            final progress = (_starController.value * star.speed + star.delay) % 2.0;
-            final x = star.x + progress * 1.5;
-            final y = star.y + progress * 1.5;
-            final opacity = x > 0 && x < 1.5 && y > -0.5 && y < 1.5
-                ? (1.0 - (progress / 2.0).abs()) * star.brightness
-                : 0.0;
-
-            final pulse = (sin(_starController.value * 6 * pi + star.delay * 12) + 1) / 2;
-            final currentOpacity = opacity * (0.7 + 0.3 * pulse);
-
-            return Positioned(
-              left: x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Opacity(
-                opacity: currentOpacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: star.size,
-                  height: star.size,
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.yellow.withOpacity(0.8),
-                        blurRadius: star.size * 2,
-                        spreadRadius: star.size * 0.5,
-                      ),
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.4),
-                        blurRadius: star.size * 4,
-                        spreadRadius: star.size * 1.5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
   }
 
   void _loadProfessions() {
@@ -512,12 +444,6 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
     return colors[type] ?? const Color(0xFF6C63FF);
   }
 
-  @override
-  void dispose() {
-    _starController.dispose();
-    super.dispose();
-  }
-
   void _showPerspectiveProfessions(BuildContext context) {
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -551,26 +477,26 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F2D),
+      backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Звездный фон с 150 звездами
-          _buildStarBackground(),
+          const ThemedBackground(),
 
           // Градиентный оверлей
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF0A0F2D).withOpacity(0.7),
-                  const Color(0xFF1E3A8A).withOpacity(0.5),
-                  const Color(0xFF0A0F2D).withOpacity(0.7),
-                ],
+          if (context.watch<ThemeManager>().currentTheme != SeasonTheme.profgid && context.watch<ThemeManager>().currentTheme != SeasonTheme.greeting)
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.7),
+                    const Color(0xFF1E3A8A).withValues(alpha: 0.5),
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.7),
+                  ],
+                ),
               ),
             ),
-          ),
 
           SafeArea(
             child: Column(
@@ -579,14 +505,14 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.95),
+                    color: Colors.white.withValues(alpha: 0.95),
                     borderRadius: const BorderRadius.only(
                       bottomLeft: Radius.circular(20),
                       bottomRight: Radius.circular(20),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.blueAccent.withOpacity(0.3),
+                        color: Colors.blueAccent.withValues(alpha: 0.3),
                         blurRadius: 20,
                         offset: const Offset(0, 5),
                       ),
@@ -666,11 +592,11 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Colors.white.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 3),
                         ),
@@ -703,11 +629,11 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.blueAccent.withOpacity(0.2),
+                        color: Colors.blueAccent.withValues(alpha: 0.2),
                         blurRadius: 15,
                         offset: const Offset(0, 5),
                       ),
@@ -797,7 +723,7 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
                         margin: const EdgeInsets.only(bottom: 12),
                         child: Material(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.white.withOpacity(0.95),
+                          color: Colors.white.withValues(alpha: 0.95),
                           elevation: 8,
                           child: Container(
                             padding: const EdgeInsets.all(16),
@@ -808,7 +734,7 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
                                 end: Alignment.bottomRight,
                                 colors: [
                                   Colors.white,
-                                  typeColor.withOpacity(0.1),
+                                  typeColor.withValues(alpha: 0.1),
                                 ],
                               ),
                             ),
@@ -845,9 +771,9 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                   decoration: BoxDecoration(
-                                    color: typeColor.withOpacity(0.1),
+                                    color: typeColor.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: typeColor.withOpacity(0.3)),
+                                    border: Border.all(color: typeColor.withValues(alpha: 0.3)),
                                   ),
                                   child: Text(
                                     'Тип: ${p['type'][0].toUpperCase() + p['type'].substring(1)}',
@@ -901,9 +827,9 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
                                     return Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFF6C63FF).withOpacity(0.1),
+                                        color: const Color(0xFF6C63FF).withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: const Color(0xFF6C63FF).withOpacity(0.3)),
+                                        border: Border.all(color: const Color(0xFF6C63FF).withValues(alpha: 0.3)),
                                       ),
                                       child: Text(
                                         college,
@@ -938,7 +864,7 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -961,22 +887,4 @@ class _ProfessionsPageState extends State<ProfessionsPage> with SingleTickerProv
       ),
     );
   }
-}
-
-class Star {
-  final double x;
-  final double y;
-  final double speed;
-  final double size;
-  final double delay;
-  final double brightness;
-
-  Star({
-    required this.x,
-    required this.y,
-    required this.speed,
-    required this.size,
-    required this.delay,
-    required this.brightness,
-  });
 }

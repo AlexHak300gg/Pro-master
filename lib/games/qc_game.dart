@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_database/firebase_database.dart';
+import '../theme/themed_background.dart';
 import 'dart:math' as math;
 
 class QCGame extends StatefulWidget {
@@ -193,33 +194,23 @@ class _QCGameState extends State<QCGame> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final level = _levels[_currentLevel];
-    
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F2D),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFF0A0F2D),
-              const Color(0xFF1E3A8A).withOpacity(0.3),
-              const Color(0xFF0A0F2D),
-            ],
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          const ThemedBackground(),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 20),
+                _buildProgress(),
+                const SizedBox(height: 20),
+                Expanded(child: _buildGameArea()),
+              ],
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 20),
-              _buildProgress(),
-              const SizedBox(height: 20),
-              Expanded(child: _buildGameArea()),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }

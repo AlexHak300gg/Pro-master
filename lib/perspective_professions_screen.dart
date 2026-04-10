@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'games/foundry_game.dart';
 import 'games/qc_game.dart';
 import 'games/stamper_game.dart';
+import 'theme/themed_background.dart';
 
 class PerspectiveProfessionsScreen extends StatefulWidget {
   final List<Map<String, dynamic>> perspectiveProfessions;
@@ -89,32 +90,23 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
     });
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0A0F2D),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFF0A0F2D),
-              const Color(0xFF1E3A8A).withOpacity(0.3),
-              const Color(0xFF0A0F2D),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Заголовок
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          const ThemedBackground(),
+          SafeArea(
+            child: Column(
+              children: [
+                // Заголовок
               Container(
                 margin: const EdgeInsets.all(20),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.95),
+                  color: Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blueAccent.withOpacity(0.3),
+                      color: Colors.blueAccent.withValues(alpha: 0.3),
                       blurRadius: 20,
                       offset: const Offset(0, 5),
                     ),
@@ -126,7 +118,7 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
                     Row(
                       children: [
                         Material(
-                          color: const Color(0xFF6C63FF).withOpacity(0.12),
+                          color: const Color(0xFF6C63FF).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(14),
                           child: InkWell(
                             borderRadius: BorderRadius.circular(14),
@@ -175,11 +167,11 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
                   margin: const EdgeInsets.symmetric(horizontal: 20),
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.95),
+                    color: Colors.white.withValues(alpha: 0.95),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 15,
                         offset: const Offset(0, 5),
                       ),
@@ -215,8 +207,9 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
             ],
           ),
         ),
-      ),
-    );
+      ],
+    ),
+  );
   }
 
   Widget _buildEducationInfo(Map<String, dynamic> profession) {
@@ -224,10 +217,10 @@ class _PerspectiveProfessionsScreenState extends State<PerspectiveProfessionsScr
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF6C63FF).withOpacity(0.05),
+        color: const Color(0xFF6C63FF).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFF6C63FF).withOpacity(0.2),
+          color: const Color(0xFF6C63FF).withValues(alpha: 0.2),
         ),
       ),
       child: Column(

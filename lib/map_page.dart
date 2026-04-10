@@ -22,9 +22,9 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
   late AnimationController _starController;
   final List<Star> _stars = [];
   final Random _random = Random();
-  bool _isDarkMode = true;
   final _db = FirebaseDatabase.instance.ref();
   bool _isAddingPlace = false;
+  bool _showUserPlaces = true;
   List<Map<String, dynamic>> userPlaces = [];
 
   final Map<String, Color> _typeColors = {
@@ -37,7 +37,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Сарапульский многопрофильный колледж",
       "lat": 56.441349,
       "lng": 53.737112,
-      "url": "https://ciur.ru/sit",
+      "url": "https://ciur.ru/sit/default.aspx",
       "city": "Сарапул",
       "type": "БПОУ УР"
     },
@@ -45,7 +45,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский торгово-экономический техникум",
       "lat": 56.858258,
       "lng": 53.244261,
-      "url": "https://iteh.ru",
+      "url": "https://ciur.ru/itet/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -53,7 +53,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Глазовский аграрно-промышленный техникум",
       "lat": 58.139167,
       "lng": 52.658425,
-      "url": "https://gaptech.ru",
+      "url": "https://ciur.ru/gapt/default.aspx",
       "city": "Глазов",
       "type": "АПОУ УР"
     },
@@ -61,7 +61,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Сарапульский политехнический колледж",
       "lat": 56.474861,
       "lng": 53.798667,
-      "url": "https://spk-sarapul.ru",
+      "url": "https://ciur.ru/sptk/default.aspx",
       "city": "Сарапул",
       "type": "БПОУ УР"
     },
@@ -69,7 +69,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский промышленно-экономический колледж",
       "lat": 56.864444,
       "lng": 53.273056,
-      "url": "https://ipek.ru",
+      "url": "https://ciur.ru/ipek/default.aspx",
       "city": "Ижевск",
       "type": "АПОУ УР"
     },
@@ -77,15 +77,15 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Строительный техникум",
       "lat": 56.839722,
       "lng": 53.258333,
-      "url": "https://stroyteh.ru",
+      "url": "https://ciur.ru/st/default.aspx",
       "city": "Ижевск",
       "type": "АПОУ УР"
     },
     {
       "name": "Глазовский технический колледж",
-      "lat": 55.886667,
-      "lng": 52.491944,
-      "url": "https://gtk-gazov.ru",
+      "lat": 58.131944,
+      "lng": 52.667500,
+      "url": "https://ciur.ru/gtk/default.aspx",
       "city": "Глазов",
       "type": "БПОУ УР"
     },
@@ -93,7 +93,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Воткинский машиностроительный техникум имени В.Г. Садовникова",
       "lat": 57.059444,
       "lng": 53.987222,
-      "url": "https://vmt-votk.ru",
+      "url": "https://ciur.ru/vmt/default.aspx",
       "city": "Воткинск",
       "type": "БПОУ УР"
     },
@@ -101,7 +101,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Игринский политехнический техникум",
       "lat": 57.554444,
       "lng": 53.054444,
-      "url": "https://ipt-igrik.ru",
+      "url": "https://ciur.ru/ipt/default.aspx",
       "city": "Игра",
       "type": "БПОУ УР"
     },
@@ -109,7 +109,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский техникум индустрии питания",
       "lat": 56.878056,
       "lng": 53.265278,
-      "url": "https://itip-izh.ru",
+      "url": "https://ciur.ru/itip/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -117,7 +117,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Можгинский агропромышленный колледж имени Г.Г. Оревкова",
       "lat": 56.444722,
       "lng": 52.227778,
-      "url": "https://mapk-mozhga.ru",
+      "url": "https://ciur.ru/mapk/default.aspx",
       "city": "Можга",
       "type": "БПОУ УР"
     },
@@ -125,7 +125,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Можгинский педагогический колледж имени Т.К. Борисова",
       "lat": 56.448611,
       "lng": 52.234722,
-      "url": "https://mpk-mozhga.ru",
+      "url": "https://ciur.ru/mpk/default.aspx",
       "city": "Можга",
       "type": "БПОУ УР"
     },
@@ -133,7 +133,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский монтажный техникум",
       "lat": 56.847500,
       "lng": 53.270278,
-      "url": "https://imt-izh.ru",
+      "url": "https://ciur.ru/imt/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -141,7 +141,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Дебёсский политехникум",
       "lat": 57.651111,
       "lng": 53.808333,
-      "url": "https://debpolytech.ru",
+      "url": "https://ciur.ru/dpt/default.aspx",
       "city": "Дебёсы",
       "type": "БПОУ УР"
     },
@@ -149,7 +149,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Экономико-технологический колледж",
       "lat": 56.834167,
       "lng": 53.221667,
-      "url": "https://etc-izh.ru",
+      "url": "https://ciur.ru/etk/default.aspx",
       "city": "Ижевск",
       "type": "АПОУ УР"
     },
@@ -157,15 +157,15 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Асановский аграрно-технический техникум",
       "lat": 56.252222,
       "lng": 53.468333,
-      "url": "https://aat-asanovka.ru",
-      "city": "Асановка",
+      "url": "https://asanovo-att.ru/",
+      "city": "Асаново",
       "type": "БПОУ УР"
     },
     {
       "name": "Техникум радиоэлектроники и информационных технологий имени А.В. Воскресенского",
       "lat": 56.821944,
       "lng": 53.205556,
-      "url": "https://trit-izh.ru",
+      "url": "https://www.trit.biz/",
       "city": "Ижевск",
       "type": "АПОУ УР"
     },
@@ -173,7 +173,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский политехнический колледж",
       "lat": 56.863889,
       "lng": 53.298611,
-      "url": "https://ipc-izh.ru",
+      "url": "https://ciur.ru/ipk/default.aspx",
       "city": "Ижевск",
       "type": "АПОУ УР"
     },
@@ -181,7 +181,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Сюмсинский техникум лесного и сельского хозяйства",
       "lat": 57.111111,
       "lng": 51.605556,
-      "url": "https://stlsh-syums.ru",
+      "url": "https://ciur.ru/stlsh/default.aspx",
       "city": "Сюмси",
       "type": "БПОУ УР"
     },
@@ -189,7 +189,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Топливно-энергетический колледж",
       "lat": 56.823611,
       "lng": 53.194444,
-      "url": "https://tec-izh.ru",
+      "url": "https://ciur.ru/tek/default.aspx",
       "city": "Ижевск",
       "type": "АПОУ УР"
     },
@@ -197,7 +197,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Сарапульский колледж социально-педагогических технологий",
       "lat": 56.467222,
       "lng": 53.801389,
-      "url": "https://scspt-sarapul.ru",
+      "url": "https://ciur.ru/spk/default.aspx",
       "city": "Сарапул",
       "type": "БПОУ УР"
     },
@@ -205,7 +205,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Удмуртский республиканский социально-педагогический колледж",
       "lat": 56.845833,
       "lng": 53.251389,
-      "url": "https://urspk-udm.ru",
+      "url": "https://ciur.ru/urspk/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -213,7 +213,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Воткинский промышленный техникум",
       "lat": 57.051667,
       "lng": 54.001389,
-      "url": "https://vpt-votk.ru",
+      "url": "https://ciur.ru/vpt/default.aspx",
       "city": "Воткинск",
       "type": "БПОУ УР"
     },
@@ -221,7 +221,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский индустриальный техникум имени Е.Ф. Драгунова",
       "lat": 56.856389,
       "lng": 53.301667,
-      "url": "https://iit-dragunov.ru",
+      "url": "https://ciur.ru/iit/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -229,7 +229,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский агростроительный техникум",
       "lat": 56.831944,
       "lng": 53.240278,
-      "url": "https://iat-izh.ru",
+      "url": "https://ciur.ru/iast/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -237,7 +237,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Радиомеханический техникум имени В.А. Шутова",
       "lat": 56.876389,
       "lng": 53.279167,
-      "url": "https://rmt-izh.ru",
+      "url": "https://ciur.ru/rmt/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -245,7 +245,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Воткинский музыкально-педагогический колледж имени П.И. Чайковского",
       "lat": 57.047222,
       "lng": 53.994444,
-      "url": "https://vmpc-votk.ru",
+      "url": "https://ciur.ru/vmpk/default.aspx",
       "city": "Воткинск",
       "type": "БПОУ УР"
     },
@@ -253,7 +253,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский машиностроительный техникум имени С.Н. Борина",
       "lat": 56.838056,
       "lng": 53.301389,
-      "url": "https://imt-borina.ru",
+      "url": "https://ciur.ru/imst/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -261,7 +261,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Глазовский политехнический колледж",
       "lat": 58.143056,
       "lng": 52.661389,
-      "url": "https://gpk-glazov.ru",
+      "url": "https://ciur.ru/glazovpk/default.aspx",
       "city": "Глазов",
       "type": "БПОУ УР"
     },
@@ -269,7 +269,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Увинский профессиональный колледж",
       "lat": 56.985278,
       "lng": 52.185278,
-      "url": "https://upk-uvinsk.ru",
+      "url": "https://ciur.ru/upk/default.aspx",
       "city": "Ува",
       "type": "БПОУ УР"
     },
@@ -277,7 +277,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ярский политехникум",
       "lat": 58.246111,
       "lng": 52.105556,
-      "url": "https://yarkpolytech.ru",
+      "url": "https://ciur.ru/yapt/default.aspx",
       "city": "Яр",
       "type": "БПОУ УР"
     },
@@ -285,7 +285,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Ижевский автотранспортный техникум",
       "lat": 56.850833,
       "lng": 53.289444,
-      "url": "https://iat-izh.ru",
+      "url": "https://ciur.ru/iat/default.aspx",
       "city": "Ижевск",
       "type": "БПОУ УР"
     },
@@ -293,7 +293,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       "name": "Сарапульский техникум машиностроения и информационных технологий",
       "lat": 56.461111,
       "lng": 53.791667,
-      "url": "https://stm-izh.ru",
+      "url": "http://stmit.ru/",
       "city": "Сарапул",
       "type": "БПОУ УР"
     }
@@ -356,54 +356,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildStarBackground() {
-    if (!_isDarkMode) return const SizedBox();
-
-    return AnimatedBuilder(
-      animation: _starController,
-      builder: (context, child) {
-        return Stack(
-          children: _stars.map((star) {
-            final progress = (_starController.value * star.speed + star.delay) % 2.0;
-            final x = star.x + progress * 1.5;
-            final y = star.y + progress * 1.5;
-            final opacity = x > 0 && x < 1.5 && y > -0.5 && y < 1.5
-                ? (1.0 - (progress / 2.0).abs()) * star.brightness
-                : 0.0;
-
-            final pulse = (sin(_starController.value * 5 * pi + star.delay * 8) + 1) / 2;
-            final currentOpacity = opacity * (0.8 + 0.2 * pulse);
-
-            return Positioned(
-              left: x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Opacity(
-                opacity: currentOpacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: star.size,
-                  height: star.size,
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.yellow.withOpacity(0.9),
-                        blurRadius: star.size * 3,
-                        spreadRadius: star.size * 0.8,
-                      ),
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.6),
-                        blurRadius: star.size * 6,
-                        spreadRadius: star.size * 2,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
+    return const SizedBox();
   }
 
   void _navigate(int index) {
@@ -414,8 +367,8 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
       '/professions',
       '/profile',
     ];
-    if (routes[index] != null) {
-      Navigator.pushReplacementNamed(context, routes[index]!, arguments: widget.userId);
+    if (index >= 0 && index < routes.length) {
+      Navigator.pushReplacementNamed(context, routes[index], arguments: widget.userId);
     }
   }
 
@@ -440,9 +393,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: _isDarkMode
-                    ? [const Color(0xFF1E3A8A), const Color(0xFF0A0F2D)]
-                    : [Colors.white, const Color(0xFFE3F2FD)],
+                colors: [Colors.white, const Color(0xFFE3F2FD)],
               ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: const Color(0xFF6C63FF).withOpacity(0.5)),
@@ -479,7 +430,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                         style: GoogleFonts.nunito(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: _isDarkMode ? Colors.white : Colors.black,
+                          color: Colors.black,
                         ),
                       ),
                     ),
@@ -492,7 +443,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                       },
                       icon: Icon(
                         Icons.close,
-                        color: _isDarkMode ? Colors.white70 : Colors.grey[700],
+                        color: Colors.grey[700],
                       ),
                     ),
                   ],
@@ -502,14 +453,14 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                   'Широта: ${point.latitude.toStringAsFixed(5)}',
                   style: GoogleFonts.nunito(
                     fontSize: 12,
-                    color: _isDarkMode ? Colors.white60 : Colors.grey[600]!,
+                    color: Colors.grey[600]!,
                   ),
                 ),
                 Text(
                   'Долгота: ${point.longitude.toStringAsFixed(5)}',
                   style: GoogleFonts.nunito(
                     fontSize: 12,
-                    color: _isDarkMode ? Colors.white60 : Colors.grey[600]!,
+                    color: Colors.grey[600]!,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -518,17 +469,17 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                   decoration: InputDecoration(
                     hintText: 'Название места',
                     hintStyle: GoogleFonts.nunito(
-                      color: _isDarkMode ? Colors.white60 : Colors.grey[600],
+                      color: Colors.grey[600],
                     ),
                     filled: true,
-                    fillColor: _isDarkMode ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                    fillColor: Colors.grey.withOpacity(0.1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                   ),
                   style: GoogleFonts.nunito(
-                    color: _isDarkMode ? Colors.white : Colors.black,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -538,17 +489,17 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                   decoration: InputDecoration(
                     hintText: 'Описание места',
                     hintStyle: GoogleFonts.nunito(
-                      color: _isDarkMode ? Colors.white60 : Colors.grey[600],
+                      color: Colors.grey[600],
                     ),
                     filled: true,
-                    fillColor: _isDarkMode ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                    fillColor: Colors.grey.withOpacity(0.1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                   ),
                   style: GoogleFonts.nunito(
-                    color: _isDarkMode ? Colors.white : Colors.black,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -557,17 +508,17 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                   decoration: InputDecoration(
                     hintText: 'Ссылка на место (необязательно)',
                     hintStyle: GoogleFonts.nunito(
-                      color: _isDarkMode ? Colors.white60 : Colors.grey[600],
+                      color: Colors.grey[600],
                     ),
                     filled: true,
-                    fillColor: _isDarkMode ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                    fillColor: Colors.grey.withOpacity(0.1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
                     ),
                   ),
                   style: GoogleFonts.nunito(
-                    color: _isDarkMode ? Colors.white : Colors.black,
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -584,7 +535,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                       child: Text(
                         'Отмена',
                         style: GoogleFonts.nunito(
-                          color: _isDarkMode ? Colors.white70 : Colors.grey[700]!,
+                          color: Colors.grey[700]!,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -702,9 +653,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: _isDarkMode
-                    ? [const Color(0xFF1E3A8A), const Color(0xFF0A0F2D)]
-                    : [Colors.white, const Color(0xFFE3F2FD)],
+                colors: [Colors.white, const Color(0xFFE3F2FD)],
               ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: color.withOpacity(0.5)),
@@ -741,7 +690,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                         style: GoogleFonts.nunito(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: _isDarkMode ? Colors.white : Colors.black,
+                          color: Colors.black,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -751,13 +700,13 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                 ),
                 const SizedBox(height: 16),
                 _buildInfoRow(Icons.location_city, college['city'] as String,
-                    _isDarkMode ? Colors.white70 : Colors.grey[700]!),
+                    Colors.grey[700]!),
                 _buildInfoRow(Icons.category, college['type'] as String, color),
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _isDarkMode ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -767,14 +716,14 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                         'Широта: ${college['lat'].toStringAsFixed(5)}',
                         style: GoogleFonts.nunito(
                           fontSize: 12,
-                          color: _isDarkMode ? Colors.white60 : Colors.grey[600]!,
+                          color: Colors.grey[600]!,
                         ),
                       ),
                       Text(
                         'Долгота: ${college['lng'].toStringAsFixed(5)}',
                         style: GoogleFonts.nunito(
                           fontSize: 12,
-                          color: _isDarkMode ? Colors.white60 : Colors.grey[600]!,
+                          color: Colors.grey[600]!,
                         ),
                       ),
                     ],
@@ -789,7 +738,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                       child: Text(
                         'Закрыть',
                         style: GoogleFonts.nunito(
-                          color: _isDarkMode ? Colors.white70 : Colors.grey[700]!,
+                          color: Colors.grey[700]!,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -935,9 +884,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: _isDarkMode
-                    ? [const Color(0xFF1E3A8A), const Color(0xFF0A0F2D)]
-                    : [Colors.white, const Color(0xFFE3F2FD)],
+                colors: [Colors.white, const Color(0xFFE3F2FD)],
               ),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: Colors.red.withOpacity(0.5)),
@@ -974,7 +921,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                         style: GoogleFonts.nunito(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: _isDarkMode ? Colors.white : Colors.black,
+                          color: Colors.black,
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -984,14 +931,14 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                 ),
                 const SizedBox(height: 16),
                 _buildInfoRow(Icons.description, place['description'] as String,
-                    _isDarkMode ? Colors.white70 : Colors.grey[700]!),
+                    Colors.grey[700]!),
                 if (place['url'] != null && place['url'].toString().isNotEmpty)
                   _buildInfoRow(Icons.link, place['url'] as String, Colors.red),
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: _isDarkMode ? Colors.white.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                    color: Colors.grey.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -1001,14 +948,14 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                         'Широта: ${place['lat'].toStringAsFixed(5)}',
                         style: GoogleFonts.nunito(
                           fontSize: 12,
-                          color: _isDarkMode ? Colors.white60 : Colors.grey[600]!,
+                          color: Colors.grey[600]!,
                         ),
                       ),
                       Text(
                         'Долгота: ${place['lng'].toStringAsFixed(5)}',
                         style: GoogleFonts.nunito(
                           fontSize: 12,
-                          color: _isDarkMode ? Colors.white60 : Colors.grey[600]!,
+                          color: Colors.grey[600]!,
                         ),
                       ),
                     ],
@@ -1023,7 +970,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                       child: Text(
                         'Закрыть',
                         style: GoogleFonts.nunito(
-                          color: _isDarkMode ? Colors.white70 : Colors.grey[700]!,
+                          color: Colors.grey[700]!,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1076,7 +1023,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _isDarkMode ? const Color(0xFF0A0F2D) : Colors.grey[100],
+      backgroundColor: Colors.grey[100],
       body: Stack(
         children: [
           // Звездный фон (только в темной теме)
@@ -1111,16 +1058,14 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
             ),
             children: [
               TileLayer(
-                urlTemplate: _isDarkMode
-                    ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-                    : 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
                 subdomains: const ['a', 'b', 'c', 'd'],
                 userAgentPackageName: 'com.example.profaritashion',
               ),
               MarkerLayer(
                 markers: [
                   ...colleges.map(_buildMarker),
-                  ...userPlaces.map(_buildUserPlaceMarker),
+                  if (_showUserPlaces) ...userPlaces.map(_buildUserPlaceMarker),
                 ],
               ),
             ],
@@ -1133,7 +1078,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: _isDarkMode ? Colors.white.withOpacity(0.95) : Colors.white,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -1159,7 +1104,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                                 style: GoogleFonts.nunito(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w800,
-                                  color: _isDarkMode ? const Color(0xFF0A0F2D) : Colors.black,
+                                  color: Colors.black,
                                 ),
                               ),
                               Text(
@@ -1173,7 +1118,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                             ],
                           ),
                         ),
-                        // Кнопка переключения темы
+                        // Кнопка скрытия/показа пользовательских мест
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -1183,14 +1128,15 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                           child: IconButton(
                             onPressed: () {
                               setState(() {
-                                _isDarkMode = !_isDarkMode;
+                                _showUserPlaces = !_showUserPlaces;
                               });
                             },
                             icon: Icon(
-                              _isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                              _showUserPlaces ? Icons.visibility : Icons.visibility_off,
                               color: const Color(0xFF6C63FF),
                               size: 20,
                             ),
+                            tooltip: _showUserPlaces ? 'Скрыть места' : 'Показать места',
                           ),
                         ),
                       ],
@@ -1199,38 +1145,30 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
                     const SizedBox(height: 16),
 
                     // Легенда внутри заголовка
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: _isDarkMode ? Colors.black.withOpacity(0.05) : Colors.grey[50],
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _isDarkMode ? Colors.grey[300]! : Colors.grey[200]!,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildCompactLegendItem(Colors.blueAccent, "БПОУ УР"),
-                          _buildCompactLegendItem(Colors.green, "АПОУ УР"),
-                          _buildCompactLegendItem(Colors.red, "Пользовательские места"),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF6C63FF).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              "${colleges.length + userPlaces.length} мест",
-                              style: GoogleFonts.nunito(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF6C63FF),
-                              ),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        _buildCompactLegendItem(Colors.blueAccent, "БПОУ УР"),
+                        _buildCompactLegendItem(Colors.green, "АПОУ УР"),
+                        _buildCompactLegendItem(Colors.red, "Пользовательские места"),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF6C63FF).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            "${colleges.length + (_showUserPlaces ? userPlaces.length : 0)} мест",
+                            style: GoogleFonts.nunito(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF6C63FF),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -1244,17 +1182,17 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
             right: 16,
             child: Column(
               children: [
-                // Кнопка рейтинга вузов
-                FloatingActionButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/college_rating', arguments: widget.userId);
-                  },
-                  backgroundColor: Colors.amber,
-                  foregroundColor: Colors.white,
-                  heroTag: "rating",
-                  child: const Icon(Icons.school),
-                ),
-                const SizedBox(height: 12),
+                // Кнопка рейтинга вузов (скрыта)
+                // FloatingActionButton(
+                //   onPressed: () {
+                //     Navigator.pushNamed(context, '/college_rating', arguments: widget.userId);
+                //   },
+                //   backgroundColor: Colors.amber,
+                //   foregroundColor: Colors.white,
+                //   heroTag: "rating",
+                //   child: const Icon(Icons.school),
+                // ),
+                // const SizedBox(height: 12),
                 // Кнопка списка мест
                 FloatingActionButton(
                   onPressed: () {
@@ -1331,7 +1269,7 @@ class _MapPageState extends State<MapPage> with SingleTickerProviderStateMixin {
         Text(
           text,
           style: GoogleFonts.nunito(
-            color: _isDarkMode ? Colors.grey[700] : Colors.grey[600],
+            color: Colors.grey[600],
             fontSize: 10,
             fontWeight: FontWeight.w600,
           ),

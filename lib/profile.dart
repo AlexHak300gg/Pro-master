@@ -3,16 +3,16 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import 'widgets/bottom_nav.dart';
-import 'dart:math';
 import 'ege_screen.dart';
 import 'oge_screen.dart';
 import 'admission_chances_screen.dart';
 import 'merch_shop_screen.dart';
 import 'theme/theme_manager.dart';
 import 'theme/app_theme.dart';
-import 'theme/particle_painters.dart';
+import 'theme/themed_background.dart';
 import 'settings/theme_settings_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -30,90 +30,28 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
   String phone = '';
   List<String> favoriteColleges = [];
   List<String> favoriteProfessions = [];
-  int _currentIndex = 4;
-  late AnimationController _starController;
-  final List<Star> _stars = [];
-  final Random _random = Random();
+  final int _currentIndex = 4;
   File? _profileImage;
   final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-    _starController = AnimationController(
-      duration: const Duration(seconds: 25),
-      vsync: this,
-    )..repeat();
-
-    _initializeStars();
     _loadProfile();
     _loadFavorites();
+    _loadProfileImage();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ThemeManager>().initialize(widget.userId);
     });
   }
 
-  void _initializeStars() {
-    for (int i = 0; i < 80; i++) {
-      _stars.add(Star(
-        x: _random.nextDouble() * 1.5 - 0.5,
-        y: _random.nextDouble() * 2 - 1,
-        speed: 0.3 + _random.nextDouble() * 0.7,
-        size: 2.0 + _random.nextDouble() * 4.0,
-        delay: _random.nextDouble() * 3.0,
-        brightness: 0.6 + _random.nextDouble() * 0.4,
-      ));
+  Future<void> _loadProfileImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final path = prefs.getString('profile_image_${widget.userId}');
+    if (path != null && File(path).existsSync()) {
+      setState(() => _profileImage = File(path));
     }
-  }
-
-  Widget _buildStarBackground() {
-    return AnimatedBuilder(
-      animation: _starController,
-      builder: (context, child) {
-        return Stack(
-          children: _stars.map((star) {
-            final progress = (_starController.value * star.speed + star.delay) % 2.0;
-            final x = star.x + progress * 1.5;
-            final y = star.y + progress * 1.5;
-            final opacity = x > 0 && x < 1.5 && y > -0.5 && y < 1.5
-                ? (1.0 - (progress / 2.0).abs()) * star.brightness
-                : 0.0;
-
-            final pulse = (sin(_starController.value * 5 * pi + star.delay * 8) + 1) / 2;
-            final currentOpacity = opacity * (0.8 + 0.2 * pulse);
-
-            return Positioned(
-              left: x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Opacity(
-                opacity: currentOpacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: star.size,
-                  height: star.size,
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.yellow.withOpacity(0.9),
-                        blurRadius: star.size * 3,
-                        spreadRadius: star.size * 0.8,
-                      ),
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.6),
-                        blurRadius: star.size * 6,
-                        spreadRadius: star.size * 2,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
   }
 
   Future<void> _loadProfile() async {
@@ -155,6 +93,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
         setState(() {
           _profileImage = File(image.path);
         });
+
+        // Сохраняем путь к фото
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('profile_image_${widget.userId}', image.path);
 
         // Показываем уведомление об успешной загрузке
         ScaffoldMessenger.of(context).showSnackBar(
@@ -474,90 +416,8 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
     );
   }
 
-  Widget _buildSeasonalBackground(SeasonTheme theme) {
-    return AnimatedBuilder(
-      animation: _starController,
-      builder: (context, child) {
-        return Stack(
-          children: _stars.map((star) {
-            final progress = (_starController.value * star.speed + star.delay) % 2.0;
-            final x = star.x + progress * 1.5;
-            final y = star.y + progress * 1.5;
-            final opacity = x > 0 && x < 1.5 && y > -0.5 && y < 1.5
-                ? (1.0 - (progress / 2.0).abs()) * star.brightness
-                : 0.0;
-
-            final pulse = (sin(_starController.value * 5 * pi + star.delay * 8) + 1) / 2;
-            final currentOpacity = opacity * (0.8 + 0.2 * pulse);
-
-            Color particleColor;
-            Widget particleShape;
-
-            switch (theme) {
-              case SeasonTheme.autumn:
-                particleColor = [
-                  const Color(0xFFFF8A65),
-                  const Color(0xFFFFAB91),
-                  const Color(0xFFFFCCBC),
-                  const Color(0xFFD7CCC8),
-                ][_random.nextInt(4)];
-                particleShape = CustomPaint(
-                  size: Size(star.size, star.size),
-                  painter: LeafPainter(particleColor),
-                );
-                break;
-              case SeasonTheme.winter:
-                particleColor = Colors.white;
-                particleShape = CustomPaint(
-                  size: Size(star.size, star.size),
-                  painter: SnowflakePainter(particleColor),
-                );
-                break;
-              case SeasonTheme.spring:
-                particleColor = const Color(0xFF81C784);
-                particleShape = CustomPaint(
-                  size: Size(star.size, star.size),
-                  painter: RaindropPainter(particleColor),
-                );
-                break;
-              default:
-                particleColor = const Color(0xFFFFD54F);
-                particleShape = Container(
-                  width: star.size,
-                  height: star.size,
-                  decoration: BoxDecoration(
-                    color: particleColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: particleColor.withValues(alpha: 0.6),
-                        blurRadius: star.size / 2,
-                      ),
-                    ],
-                  ),
-                );
-            }
-
-            return Positioned(
-              left: x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Transform.rotate(
-                angle: _starController.value * 2 * pi,
-                child: Opacity(
-                  opacity: currentOpacity.clamp(0.0, 1.0),
-                  child: particleShape,
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
-  }
-
   @override
   void dispose() {
-    _starController.dispose();
     super.dispose();
   }
 
@@ -569,26 +429,24 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           backgroundColor: AppTheme.getBackgroundColor(themeManager.currentTheme),
           body: Stack(
             children: [
-              // Анимированный фон в зависимости от темы
-              if (themeManager.currentTheme != SeasonTheme.summer)
-                _buildSeasonalBackground(themeManager.currentTheme)
-              else
-                _buildStarBackground(),
+              // Универсальный тематический фон
+              const ThemedBackground(),
 
-              // Градиентный оверлей
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppTheme.getBackgroundColor(themeManager.currentTheme).withOpacity(0.6),
-                      AppTheme.getPrimaryColor(themeManager.currentTheme).withOpacity(0.4),
-                      AppTheme.getBackgroundColor(themeManager.currentTheme).withOpacity(0.6),
-                    ],
+              // Градиентный оверлей (кроме profgid и greeting)
+              if (themeManager.currentTheme != SeasonTheme.profgid && themeManager.currentTheme != SeasonTheme.greeting)
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppTheme.getBackgroundColor(themeManager.currentTheme).withValues(alpha: 0.6),
+                        AppTheme.getPrimaryColor(themeManager.currentTheme).withValues(alpha: 0.4),
+                        AppTheme.getBackgroundColor(themeManager.currentTheme).withValues(alpha: 0.6),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
               SafeArea(
                 child: Column(
@@ -963,22 +821,4 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
       },
     );
   }
-}
-
-class Star {
-  final double x;
-  final double y;
-  final double speed;
-  final double size;
-  final double delay;
-  final double brightness;
-
-  Star({
-    required this.x,
-    required this.y,
-    required this.speed,
-    required this.size,
-    required this.delay,
-    required this.brightness,
-  });
 }

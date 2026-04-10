@@ -26,6 +26,15 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
   @override
   void initState() {
     super.initState();
+    // Для profgid темы — сетка без частиц
+    // Для space темы — звёзды как обычно
+    if (widget.theme == SeasonTheme.profgid) {
+      _controller = AnimationController(
+        duration: const Duration(seconds: 20),
+        vsync: this,
+      );
+      return;
+    }
     _controller = AnimationController(
       duration: const Duration(seconds: 20),
       vsync: this,
@@ -69,6 +78,12 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
         return Colors.white;
       case SeasonTheme.spring:
         return const Color(0xFF81C784);
+      case SeasonTheme.profgid:
+        return const Color(0xFFFF6A00);
+      case SeasonTheme.space:
+        return Colors.white;
+      case SeasonTheme.greeting:
+        return const Color(0xFFFFD54F);
     }
   }
 
@@ -129,6 +144,51 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
           size: Size(particle.size, particle.size),
           painter: RaindropPainter(particle.color),
         );
+      case SeasonTheme.profgid:
+        return Container(
+          width: particle.size,
+          height: particle.size,
+          decoration: BoxDecoration(
+            color: particle.color,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: particle.color.withValues(alpha: 0.6),
+                blurRadius: particle.size / 2,
+              ),
+            ],
+          ),
+        );
+      case SeasonTheme.space:
+        return Container(
+          width: particle.size,
+          height: particle.size,
+          decoration: BoxDecoration(
+            color: particle.color,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: particle.color.withValues(alpha: 0.8),
+                blurRadius: particle.size * 2,
+              ),
+            ],
+          ),
+        );
+      case SeasonTheme.greeting:
+        return Container(
+          width: particle.size,
+          height: particle.size,
+          decoration: BoxDecoration(
+            color: particle.color,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: particle.color.withValues(alpha: 0.6),
+                blurRadius: particle.size,
+              ),
+            ],
+          ),
+        );
     }
   }
 
@@ -140,6 +200,20 @@ class _AnimatedBackgroundState extends State<AnimatedBackground>
 
   @override
   Widget build(BuildContext context) {
+    // Для profgid — фон в клетку без частиц
+    if (widget.theme == SeasonTheme.profgid) {
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: GraphPaperPainter(),
+            ),
+          ),
+          widget.child,
+        ],
+      );
+    }
+
     return Stack(
       children: [
         Container(

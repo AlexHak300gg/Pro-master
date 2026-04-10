@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'home_with_bottom_nav.dart';
-import 'login.dart'; // Добавляем импорт страницы входа
-import 'dart:math';
+import 'login.dart';
+import 'theme/themed_background.dart';
+import 'theme/app_theme.dart';
+import 'theme/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -24,99 +27,9 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
 
   final dbRef = FirebaseDatabase.instance.ref().child("users");
 
-  late AnimationController _starController;
-  final List<Star> _stars = [];
-  final Random _random = Random();
-
   @override
   void initState() {
     super.initState();
-    _starController = AnimationController(
-      duration: const Duration(seconds: 25),
-      vsync: this,
-    )..repeat();
-
-    _initializeStars();
-  }
-
-  void _initializeStars() {
-    for (int i = 0; i < 80; i++) { // 80 звезд
-      _stars.add(Star(
-        x: _random.nextDouble(),
-        y: _random.nextDouble() * 2 - 1,
-        speed: 0.2 + _random.nextDouble() * 1.0,
-        size: 2.0 + _random.nextDouble() * 5.0,
-        delay: _random.nextDouble() * 4.0,
-        brightness: 0.5 + _random.nextDouble() * 0.5,
-        color: _getRandomStarColor(),
-      ));
-    }
-  }
-
-  Color _getRandomStarColor() {
-    final colors = [
-      Colors.white,
-      const Color(0xFFF8F9FA),
-      const Color(0xFFE3F2FD),
-      const Color(0xFFBBDEFB),
-      const Color(0xFF90CAF9),
-      const Color(0xFF64B5F6),
-      const Color(0xFFE1F5FE),
-    ];
-    return colors[_random.nextInt(colors.length)];
-  }
-
-  Widget _buildStarBackground() {
-    return AnimatedBuilder(
-      animation: _starController,
-      builder: (context, child) {
-        return Stack(
-          children: _stars.map((star) {
-            final progress = (_starController.value * star.speed + star.delay) % 2.0;
-            final y = progress - 0.5;
-            final opacity = y > 0 && y < 1.0
-                ? (1.0 - (y / 1.0).abs()) * star.brightness
-                : 0.0;
-
-            final pulse = (sin(_starController.value * 4 * pi + star.delay * 10) + 1) / 2;
-            final currentOpacity = opacity * (0.7 + 0.3 * pulse);
-
-            return Positioned(
-              left: star.x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Opacity(
-                opacity: currentOpacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: star.size,
-                  height: star.size,
-                  decoration: BoxDecoration(
-                    color: star.color,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: star.color.withOpacity(0.9),
-                        blurRadius: star.size * 2,
-                        spreadRadius: star.size * 0.5,
-                      ),
-                      BoxShadow(
-                        color: star.color.withOpacity(0.4),
-                        blurRadius: star.size * 4,
-                        spreadRadius: star.size * 1.5,
-                      ),
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.9),
-                        blurRadius: 1,
-                        spreadRadius: 0.5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
   }
 
   void _register() async {
@@ -171,6 +84,7 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
       final ref = dbRef.push();
       await ref.set(newUser);
 
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => HomeWithBottomNav(userId: ref.key!)),
@@ -183,7 +97,6 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
 
   @override
   void dispose() {
-    _starController.dispose();
     _login.dispose();
     _name.dispose();
     _phone.dispose();
@@ -199,23 +112,23 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
       backgroundColor: const Color(0xFF0A0F2D),
       body: Stack(
         children: [
-          // Звездный фон
-          _buildStarBackground(),
+          const ThemedBackground(),
 
           // Градиентный оверлей
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF0A0F2D).withOpacity(0.4),
-                  const Color(0xFF1E3A8A).withOpacity(0.3),
-                  const Color(0xFF0A0F2D).withOpacity(0.4),
-                ],
+          if (context.watch<ThemeManager>().currentTheme != SeasonTheme.profgid && context.watch<ThemeManager>().currentTheme != SeasonTheme.greeting)
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.4),
+                    const Color(0xFF1E3A8A).withValues(alpha: 0.3),
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.4),
+                  ],
+                ),
               ),
             ),
-          ),
 
           SafeArea(
             child: SingleChildScrollView(
@@ -233,7 +146,7 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
                     },
                     icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
                     style: IconButton.styleFrom(
-                      backgroundColor: Colors.white.withOpacity(0.2),
+                      backgroundColor: Colors.white.withValues(alpha: 0.2),
                     ),
                   ),
 
@@ -250,7 +163,7 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
                         shadows: [
                           Shadow(
                             blurRadius: 10,
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             offset: const Offset(2, 2),
                           ),
                         ],
@@ -270,7 +183,7 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
                         shadows: [
                           Shadow(
                             blurRadius: 5,
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             offset: const Offset(1, 1),
                           ),
                         ],
@@ -284,17 +197,17 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
+                      color: Colors.white.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.blueAccent.withOpacity(0.4),
+                          color: Colors.blueAccent.withValues(alpha: 0.4),
                           blurRadius: 25,
                           offset: const Offset(0, 10),
                           spreadRadius: 2,
                         ),
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -418,7 +331,7 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
                         const SizedBox(height: 24),
 
                         // Кнопка регистрации
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
@@ -429,7 +342,7 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              shadowColor: const Color(0xFF6C63FF).withOpacity(0.5),
+                              shadowColor: const Color(0xFF6C63FF).withValues(alpha: 0.5),
                             ),
                             onPressed: loading ? null : _register,
                             child: loading
@@ -478,7 +391,7 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
                         const SizedBox(height: 16),
 
                         // Кнопка "Вернуться ко входу"
-                        Container(
+                        SizedBox(
                           width: double.infinity,
                           height: 56,
                           child: OutlinedButton(
@@ -540,7 +453,7 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -573,24 +486,4 @@ class _RegistrationPageState extends State<RegistrationPage> with SingleTickerPr
       ),
     );
   }
-}
-
-class Star {
-  final double x;
-  final double y;
-  final double speed;
-  final double size;
-  final double delay;
-  final double brightness;
-  final Color color;
-
-  Star({
-    required this.x,
-    required this.y,
-    required this.speed,
-    required this.size,
-    required this.delay,
-    required this.brightness,
-    required this.color,
-  });
 }

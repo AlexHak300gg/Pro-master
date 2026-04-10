@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/theme_manager.dart';
 import '../theme/app_theme.dart';
-import '../theme/animated_background.dart';
+import '../theme/themed_background.dart';
 
 class ThemeSettingsPage extends StatefulWidget {
   final String userId;
@@ -42,103 +42,104 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage>
   Widget build(BuildContext context) {
     final themeManager = context.watch<ThemeManager>();
     final currentTheme = themeManager.currentTheme;
+    final isDark = currentTheme == SeasonTheme.space || currentTheme == SeasonTheme.profgid;
+    final primaryColor = AppTheme.getPrimaryColor(currentTheme);
 
-    return AnimatedBackground(
-      theme: currentTheme,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text(
-            'Настройки темы',
-            style: GoogleFonts.nunito(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Colors.white,
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          const ThemedBackground(),
+          Container(
+            decoration: BoxDecoration(
+              gradient: isDark
+                  ? LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppTheme.getBackgroundColor(currentTheme).withValues(alpha: 0.6),
+                        primaryColor.withValues(alpha: 0.4),
+                        AppTheme.getBackgroundColor(currentTheme).withValues(alpha: 0.6),
+                      ],
+                    )
+                  : null,
             ),
           ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        body: FadeTransition(
-          opacity: _fadeAnimation,
-          child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+          SafeArea(
+            child: FadeTransition(
+              opacity: _fadeAnimation,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.95),
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppTheme.getPrimaryColor(currentTheme).withOpacity(0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  // Заголовок
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                    child: Row(
                       children: [
+                        IconButton(
+                          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black87),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                        const SizedBox(width: 8),
                         Text(
-                          'Выберите тему',
+                          'Настройки темы',
                           style: GoogleFonts.nunito(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
-                            color: AppTheme.getPrimaryColor(currentTheme),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Персонализируйте приложение под ваше настроение',
-                          style: GoogleFonts.nunito(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[600],
+                            color: isDark ? Colors.white : Colors.black87,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Expanded(
-                    child: GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16,
-                        mainAxisSpacing: 16,
-                        childAspectRatio: 0.8,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      'Выберите оформление приложения',
+                      style: GoogleFonts.nunito(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white70 : Colors.black54,
                       ),
-                      itemCount: SeasonTheme.values.length,
-                      itemBuilder: (context, index) {
-                        final theme = SeasonTheme.values[index];
-                        final isSelected = theme == currentTheme;
-
-                        return _buildThemeCard(theme, isSelected, themeManager);
-                      },
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Сетка тем
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: 0.85,
+                        ),
+                        itemCount: SeasonTheme.values.length,
+                        itemBuilder: (context, index) {
+                          final theme = SeasonTheme.values[index];
+                          final isSelected = theme == currentTheme;
+                          return _buildThemeCard(theme, isSelected, themeManager);
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildThemeCard(SeasonTheme theme, bool isSelected, ThemeManager themeManager) {
+    final primaryColor = AppTheme.getPrimaryColor(theme);
+
+    // Единый стиль карточки: белый фон, цветная иконка
     return GestureDetector(
       onTap: () async {
         await themeManager.setTheme(theme);
-        
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -152,7 +153,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage>
                   ),
                 ],
               ),
-              backgroundColor: AppTheme.getPrimaryColor(theme),
+              backgroundColor: primaryColor,
               duration: const Duration(seconds: 2),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -162,74 +163,108 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage>
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.95),
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppTheme.getPrimaryColor(theme) : Colors.transparent,
-            width: 3,
+            color: isSelected ? primaryColor : Colors.grey[200]!,
+            width: isSelected ? 2.5 : 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected
-                  ? AppTheme.getPrimaryColor(theme).withValues(alpha: 0.4)
-                  : Colors.black.withValues(alpha: 0.1),
-              blurRadius: isSelected ? 20 : 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.35),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.getPrimaryColor(theme).withValues(alpha: 0.1),
+                color: primaryColor.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
                 border: isSelected
-                    ? Border.all(color: AppTheme.getPrimaryColor(theme), width: 2)
+                    ? Border.all(color: primaryColor, width: 2)
                     : null,
               ),
               child: Icon(
                 theme.icon,
-                size: 40,
-                color: AppTheme.getPrimaryColor(theme),
+                size: 32,
+                color: primaryColor,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Text(
               theme.displayName,
               style: GoogleFonts.nunito(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: isSelected
-                    ? AppTheme.getPrimaryColor(theme)
-                    : Colors.black87,
+                color: isSelected ? primaryColor : Colors.black87,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 4),
-            if (isSelected)
+            Text(
+              _getThemeSubtitle(theme),
+              style: GoogleFonts.nunito(
+                fontSize: 10,
+                color: Colors.black45,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (isSelected) ...[
+              const SizedBox(height: 6),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                 decoration: BoxDecoration(
-                  color: AppTheme.getPrimaryColor(theme),
-                  borderRadius: BorderRadius.circular(12),
+                  color: primaryColor,
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   'Активна',
                   style: GoogleFonts.nunito(
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
                 ),
               ),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  String _getThemeSubtitle(SeasonTheme theme) {
+    switch (theme) {
+      case SeasonTheme.summer:
+        return 'Тёплые оранжевые тона';
+      case SeasonTheme.autumn:
+        return 'Уютные коричневые тона';
+      case SeasonTheme.winter:
+        return 'Холодные голубые тона';
+      case SeasonTheme.spring:
+        return 'Свежие зелёные тона';
+      case SeasonTheme.profgid:
+        return 'Тёмно-синий с клеткой';
+      case SeasonTheme.space:
+        return 'Космос со звёздами';
+      case SeasonTheme.greeting:
+        return 'Как на приветственном экране';
+    }
   }
 }

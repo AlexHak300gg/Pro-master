@@ -3,7 +3,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:profaritashion/test_questions.dart';
 import 'choice_of_tests.dart';
-import 'dart:math';
+import 'theme/themed_background.dart';
+import 'theme/app_theme.dart';
+import 'theme/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 class TestPage extends StatefulWidget {
   final String testName;
@@ -14,7 +17,7 @@ class TestPage extends StatefulWidget {
   State<TestPage> createState() => _TestPageState();
 }
 
-class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin {
+class _TestPageState extends State<TestPage> {
   final dbRef = FirebaseDatabase.instance.ref().child("users");
   late List<Map<String, dynamic>> questions;
   int current = 0;
@@ -22,90 +25,10 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
   int? selectedOption;
   bool _isLoading = true;
 
-  // Анимация звезд
-  late AnimationController _starController;
-  final List<Star> _stars = [];
-  final Random _random = Random();
-
   @override
   void initState() {
     super.initState();
-
-    // Инициализация звездной анимации
-    _starController = AnimationController(
-      duration: const Duration(seconds: 20),
-      vsync: this,
-    )..repeat();
-
-    _initializeStars();
     _loadTest();
-  }
-
-  void _initializeStars() {
-    for (int i = 0; i < 150; i++) {
-      _stars.add(Star(
-        x: _random.nextDouble() * 1.5 - 0.5,
-        y: _random.nextDouble() * 2 - 1,
-        speed: 0.3 + _random.nextDouble() * 0.7,
-        size: 2.0 + _random.nextDouble() * 4.0,
-        delay: _random.nextDouble() * 3.0,
-        brightness: 0.6 + _random.nextDouble() * 0.4,
-      ));
-    }
-  }
-
-  Widget _buildStarBackground() {
-    return AnimatedBuilder(
-      animation: _starController,
-      builder: (context, child) {
-        return Stack(
-          children: _stars.map((star) {
-            final progress = (_starController.value * star.speed + star.delay) % 2.0;
-            final x = star.x + progress * 1.5;
-            final y = star.y + progress * 1.5;
-            final opacity = x > 0 && x < 1.5 && y > -0.5 && y < 1.5
-                ? (1.0 - (progress / 2.0).abs()) * star.brightness
-                : 0.0;
-
-            final pulse = (sin(_starController.value * 5 * pi + star.delay * 8) + 1) / 2;
-            final currentOpacity = opacity * (0.8 + 0.2 * pulse);
-
-            return Positioned(
-              left: x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Opacity(
-                opacity: currentOpacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: star.size,
-                  height: star.size,
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.yellow.withOpacity(0.9),
-                        blurRadius: star.size * 3,
-                        spreadRadius: star.size * 0.8,
-                      ),
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.6),
-                        blurRadius: star.size * 6,
-                        spreadRadius: star.size * 2,
-                      ),
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.95),
-                        blurRadius: 1,
-                        spreadRadius: 0.5,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
   }
 
   void _loadTest() {
@@ -389,32 +312,27 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
   }
 
   @override
-  void dispose() {
-    _starController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (_isLoading || questions.isEmpty) {
       return Scaffold(
         backgroundColor: const Color(0xFF0A0F2D),
         body: Stack(
           children: [
-            _buildStarBackground(),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(0xFF0A0F2D).withOpacity(0.6),
-                    const Color(0xFF1E3A8A).withOpacity(0.4),
-                    const Color(0xFF0A0F2D).withOpacity(0.6),
-                  ],
+            const ThemedBackground(),
+            if (context.watch<ThemeManager>().currentTheme != SeasonTheme.profgid && context.watch<ThemeManager>().currentTheme != SeasonTheme.greeting)
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                      const Color(0xFF1E3A8A).withValues(alpha: 0.4),
+                      const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                    ],
+                  ),
                 ),
               ),
-            ),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -440,20 +358,21 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
         backgroundColor: const Color(0xFF0A0F2D),
         body: Stack(
           children: [
-            _buildStarBackground(),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    const Color(0xFF0A0F2D).withOpacity(0.6),
-                    const Color(0xFF1E3A8A).withOpacity(0.4),
-                    const Color(0xFF0A0F2D).withOpacity(0.6),
-                  ],
+            const ThemedBackground(),
+            if (context.watch<ThemeManager>().currentTheme != SeasonTheme.profgid && context.watch<ThemeManager>().currentTheme != SeasonTheme.greeting)
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                      const Color(0xFF1E3A8A).withValues(alpha: 0.4),
+                      const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                    ],
+                  ),
                 ),
               ),
-            ),
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -479,23 +398,23 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
       backgroundColor: const Color(0xFF0A0F2D),
       body: Stack(
         children: [
-          // Звездный фон
-          _buildStarBackground(),
+          const ThemedBackground(),
 
           // Градиентный оверлей
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF0A0F2D).withOpacity(0.6),
-                  const Color(0xFF1E3A8A).withOpacity(0.4),
-                  const Color(0xFF0A0F2D).withOpacity(0.6),
-                ],
+          if (context.watch<ThemeManager>().currentTheme != SeasonTheme.profgid && context.watch<ThemeManager>().currentTheme != SeasonTheme.greeting)
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                    const Color(0xFF1E3A8A).withValues(alpha: 0.4),
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                  ],
+                ),
               ),
             ),
-          ),
 
           SafeArea(
             child: Column(
@@ -536,7 +455,7 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
                       // Прогресс бар
                       LinearProgressIndicator(
                         value: (current + 1) / questions.length,
-                        backgroundColor: Colors.white.withOpacity(0.3),
+                        backgroundColor: Colors.white.withValues(alpha: 0.3),
                         valueColor: const AlwaysStoppedAnimation<Color>(Colors.yellow),
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -566,11 +485,11 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
                           padding: const EdgeInsets.all(24),
                           margin: const EdgeInsets.only(bottom: 24),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.95),
+                            color: Colors.white.withValues(alpha: 0.95),
                             borderRadius: BorderRadius.circular(20),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
+                                color: Colors.black.withValues(alpha: 0.3),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -609,7 +528,7 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
                                           end: Alignment.bottomRight,
                                           colors: selected
                                               ? [Colors.yellow, Colors.orange]
-                                              : [Colors.white.withOpacity(0.9), Colors.white.withOpacity(0.7)],
+                                              : [Colors.white.withValues(alpha: 0.9), Colors.white.withValues(alpha: 0.7)],
                                         ),
                                         borderRadius: BorderRadius.circular(16),
                                         border: selected
@@ -617,7 +536,7 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
                                             : null,
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Colors.black.withOpacity(0.2),
+                                            color: Colors.black.withValues(alpha: 0.2),
                                             blurRadius: 6,
                                             offset: const Offset(0, 3),
                                           ),
@@ -680,7 +599,7 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
                                   boxShadow: selectedOption != null
                                       ? [
                                     BoxShadow(
-                                      color: Colors.orange.withOpacity(0.5),
+                                      color: Colors.orange.withValues(alpha: 0.5),
                                       blurRadius: 8,
                                       offset: const Offset(0, 4),
                                     ),
@@ -711,22 +630,4 @@ class _TestPageState extends State<TestPage> with SingleTickerProviderStateMixin
       ),
     );
   }
-}
-
-class Star {
-  final double x;
-  final double y;
-  final double speed;
-  final double size;
-  final double delay;
-  final double brightness;
-
-  Star({
-    required this.x,
-    required this.y,
-    required this.speed,
-    required this.size,
-    required this.delay,
-    required this.brightness,
-  });
 }

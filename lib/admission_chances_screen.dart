@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:math';
+import 'theme/themed_background.dart';
+import 'theme/app_theme.dart';
+import 'theme/theme_manager.dart';
+import 'package:provider/provider.dart';
 
 class AdmissionChancesScreen extends StatefulWidget {
   final String userId;
@@ -11,12 +14,9 @@ class AdmissionChancesScreen extends StatefulWidget {
   State<AdmissionChancesScreen> createState() => _AdmissionChancesScreenState();
 }
 
-class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with SingleTickerProviderStateMixin {
+class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> {
   final _db = FirebaseDatabase.instance.ref();
-  late AnimationController _starController;
-  final List<Star> _stars = [];
-  final Random _random = Random();
-  
+
   final TextEditingController _scoreController = TextEditingController();
   List<Map<String, dynamic>> professions = [];
   List<Map<String, dynamic>> chances = [];
@@ -25,74 +25,7 @@ class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with Si
   @override
   void initState() {
     super.initState();
-    _starController = AnimationController(
-      duration: const Duration(seconds: 25),
-      vsync: this,
-    )..repeat();
-    _initializeStars();
     _loadProfessions();
-  }
-
-  void _initializeStars() {
-    for (int i = 0; i < 80; i++) {
-      _stars.add(Star(
-        x: _random.nextDouble() * 1.5 - 0.5,
-        y: _random.nextDouble() * 2 - 1,
-        speed: 0.3 + _random.nextDouble() * 0.7,
-        size: 2.0 + _random.nextDouble() * 4.0,
-        delay: _random.nextDouble() * 3.0,
-        brightness: 0.6 + _random.nextDouble() * 0.4,
-      ));
-    }
-  }
-
-  Widget _buildStarBackground() {
-    return AnimatedBuilder(
-      animation: _starController,
-      builder: (context, child) {
-        return Stack(
-          children: _stars.map((star) {
-            final progress = (_starController.value * star.speed + star.delay) % 2.0;
-            final x = star.x + progress * 1.5;
-            final y = star.y + progress * 1.5;
-            final opacity = x > 0 && x < 1.5 && y > -0.5 && y < 1.5
-                ? (1.0 - (progress / 2.0).abs()) * star.brightness
-                : 0.0;
-
-            final pulse = (sin(_starController.value * 5 * pi + star.delay * 8) + 1) / 2;
-            final currentOpacity = opacity * (0.8 + 0.2 * pulse);
-
-            return Positioned(
-              left: x * MediaQuery.of(context).size.width,
-              top: y * MediaQuery.of(context).size.height,
-              child: Opacity(
-                opacity: currentOpacity.clamp(0.0, 1.0),
-                child: Container(
-                  width: star.size,
-                  height: star.size,
-                  decoration: BoxDecoration(
-                    color: Colors.yellow,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.yellow.withOpacity(0.9),
-                        blurRadius: star.size * 3,
-                        spreadRadius: star.size * 0.8,
-                      ),
-                      BoxShadow(
-                        color: Colors.orange.withOpacity(0.6),
-                        blurRadius: star.size * 6,
-                        spreadRadius: star.size * 2,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        );
-      },
-    );
   }
 
   Future<void> _loadProfessions() async {
@@ -147,7 +80,6 @@ class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with Si
 
   @override
   void dispose() {
-    _starController.dispose();
     _scoreController.dispose();
     super.dispose();
   }
@@ -158,20 +90,21 @@ class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with Si
       backgroundColor: const Color(0xFF0A0F2D),
       body: Stack(
         children: [
-          _buildStarBackground(),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFF0A0F2D).withOpacity(0.6),
-                  const Color(0xFF1E3A8A).withOpacity(0.4),
-                  const Color(0xFF0A0F2D).withOpacity(0.6),
-                ],
+          const ThemedBackground(),
+          if (context.watch<ThemeManager>().currentTheme != SeasonTheme.profgid && context.watch<ThemeManager>().currentTheme != SeasonTheme.greeting)
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                    const Color(0xFF1E3A8A).withValues(alpha: 0.4),
+                    const Color(0xFF0A0F2D).withValues(alpha: 0.6),
+                  ],
+                ),
               ),
             ),
-          ),
           SafeArea(
             child: Column(
               children: [
@@ -204,11 +137,11 @@ class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with Si
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.95),
+                            color: Colors.white.withValues(alpha: 0.95),
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF6C63FF).withOpacity(0.3),
+                                color: const Color(0xFF6C63FF).withValues(alpha: 0.3),
                                 blurRadius: 15,
                                 offset: const Offset(0, 5),
                               ),
@@ -276,11 +209,11 @@ class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with Si
                             margin: const EdgeInsets.symmetric(vertical: 8),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.95),
+                              color: Colors.white.withValues(alpha: 0.95),
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: (chance['color'] as Color).withOpacity(0.3),
+                                  color: (chance['color'] as Color).withValues(alpha: 0.3),
                                   blurRadius: 15,
                                   offset: const Offset(0, 5),
                                 ),
@@ -305,7 +238,7 @@ class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with Si
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                       decoration: BoxDecoration(
-                                        color: (chance['color'] as Color).withOpacity(0.2),
+                                        color: (chance['color'] as Color).withValues(alpha: 0.2),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
@@ -334,7 +267,7 @@ class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with Si
                               ],
                             ),
                           );
-                        }).toList(),
+                        }),
                         const SizedBox(height: 20),
                         SizedBox(
                           width: double.infinity,
@@ -373,20 +306,3 @@ class _AdmissionChancesScreenState extends State<AdmissionChancesScreen> with Si
   }
 }
 
-class Star {
-  final double x;
-  final double y;
-  final double speed;
-  final double size;
-  final double delay;
-  final double brightness;
-
-  Star({
-    required this.x,
-    required this.y,
-    required this.speed,
-    required this.size,
-    required this.delay,
-    required this.brightness,
-  });
-}
